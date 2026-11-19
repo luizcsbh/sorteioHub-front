@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fundo arredondado -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <rect width="64" height="64" rx="14" fill="url(#shine)"/>
+
+  <!-- Fita horizontal da caixa de presente -->
+  <rect x="12" y="28" width="40" height="5" rx="2.5" fill="white" opacity="0.95"/>
+
+  <!-- Caixa principal -->
+  <rect x="12" y="33" width="40" height="20" rx="3" fill="white" opacity="0.20"/>
+  <rect x="12" y="33" width="40" height="20" rx="3" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Tampa da caixa -->
+  <rect x="10" y="24" width="44" height="9" rx="3" fill="white" opacity="0.15"/>
+  <rect x="10" y="24" width="44" height="9" rx="3" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Fita vertical -->
+  <rect x="29.5" y="24" width="5" height="29" rx="2.5" fill="white" opacity="0.90"/>
+
+  <!-- Laço - arco esquerdo -->
+  <path d="M32 24 C26 18 18 18 18 23 C18 27 26 27 32 24Z" fill="white" opacity="0.95"/>
+  <!-- Laço - arco direito -->
+  <path d="M32 24 C38 18 46 18 46 23 C46 27 38 27 32 24Z" fill="white" opacity="0.80"/>
+
+  <!-- Estrela de sorteio (canto inferior direito) -->
+  <circle cx="47" cy="47" r="8" fill="#FBBF24"/>
+  <path d="M47 41.5 L48.2 45.3 L52.2 45.3 L49 47.7 L50.2 51.5 L47 49.1 L43.8 51.5 L45 47.7 L41.8 45.3 L45.8 45.3 Z"
+        fill="white"/>
+</svg>
