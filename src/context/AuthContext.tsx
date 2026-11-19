@@ -31,6 +31,8 @@ interface AuthContextType {
   isLoading: boolean;
   needsProfileCompletion: boolean;
   loginWithGoogle: (credential?: string, mockProfile?: any) => Promise<void>;
+  loginWithEmail: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   completeProfile: (data: any) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -82,6 +84,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithEmail = async (email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const res = await api.post('/auth/login', { email, password });
+      const { token: newToken, user: newUser, needsProfileCompletion: needsCompletion } = res.data;
+
+      localStorage.setItem('sorteiohub_token', newToken);
+      localStorage.setItem('sorteiohub_user', JSON.stringify(newUser));
+      setToken(newToken);
+      setUser(newUser);
+      setNeedsProfileCompletion(needsCompletion ?? false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const register = async (name: string, email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const res = await api.post('/auth/register', { name, email, password });
+      const { token: newToken, user: newUser, needsProfileCompletion: needsCompletion } = res.data;
+
+      localStorage.setItem('sorteiohub_token', newToken);
+      localStorage.setItem('sorteiohub_user', JSON.stringify(newUser));
+      setToken(newToken);
+      setUser(newUser);
+      setNeedsProfileCompletion(needsCompletion ?? false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const completeProfile = async (data: any) => {
     setIsLoading(true);
     try {
@@ -126,6 +160,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         needsProfileCompletion,
         loginWithGoogle,
+        loginWithEmail,
+        register,
         completeProfile,
         logout,
         refreshUser,
