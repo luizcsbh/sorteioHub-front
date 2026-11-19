@@ -36,17 +36,29 @@ const PasswordInput: React.FC<{
   placeholder?: string;
   disabled?: boolean;
   id?: string;
-}> = ({ value, onChange, placeholder = 'Senha', disabled, id }) => {
+  name?: string;
+  autoComplete?: string;
+}> = ({
+  value,
+  onChange,
+  placeholder = 'Senha',
+  disabled,
+  id,
+  name,
+  autoComplete = 'current-password',
+}) => {
   const [show, setShow] = useState(false);
   return (
     <div className="relative">
       <input
         id={id}
+        name={name}
         type={show ? 'text' : 'password'}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
+        autoComplete={autoComplete}
         className="w-full px-4 py-3 pr-11 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition text-sm"
       />
       <button
@@ -382,7 +394,10 @@ export const LoginPage: React.FC = () => {
             {tab === 'login' && (
               <form onSubmit={handleLogin} className="space-y-4">
                 <input
+                  id="login-email"
+                  name="email"
                   type="email"
+                  autoComplete="username"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   placeholder="Seu e-mail"
@@ -390,6 +405,9 @@ export const LoginPage: React.FC = () => {
                   className={inputCls}
                 />
                 <PasswordInput
+                  id="login-password"
+                  name="password"
+                  autoComplete="current-password"
                   value={loginPassword}
                   onChange={setLoginPassword}
                   placeholder="Sua senha"
@@ -418,7 +436,10 @@ export const LoginPage: React.FC = () => {
             {tab === 'register' && (
               <form onSubmit={handleRegister} className="space-y-3">
                 <input
+                  id="reg-name"
+                  name="name"
                   type="text"
+                  autoComplete="name"
                   value={regName}
                   onChange={(e) => setRegName(e.target.value)}
                   placeholder="Nome completo"
@@ -426,7 +447,10 @@ export const LoginPage: React.FC = () => {
                   className={inputCls}
                 />
                 <input
+                  id="reg-email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
                   placeholder="Seu e-mail"
@@ -434,6 +458,9 @@ export const LoginPage: React.FC = () => {
                   className={inputCls}
                 />
                 <PasswordInput
+                  id="reg-password"
+                  name="password"
+                  autoComplete="new-password"
                   value={regPassword}
                   onChange={setRegPassword}
                   placeholder="Crie uma senha"
@@ -458,6 +485,9 @@ export const LoginPage: React.FC = () => {
                 )}
 
                 <PasswordInput
+                  id="reg-confirm"
+                  name="confirmPassword"
+                  autoComplete="new-password"
                   value={regConfirm}
                   onChange={setRegConfirm}
                   placeholder="Confirmar senha"
