@@ -17,6 +17,7 @@ import { JoinInvitePage } from './pages/groups/JoinInvitePage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { CampaignsPage } from './pages/admin/CampaignsPage';
 import { TermsAndPrivacyPage } from './pages/legal/TermsAndPrivacyPage';
+import { ParticipatePage } from './pages/raffles/ParticipatePage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({
   children,
@@ -49,7 +50,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const isAuthPage = location.pathname === '/login';
+  const isAuthPage =
+    location.pathname === '/login' ||
+    location.pathname.startsWith('/participar') ||
+    location.pathname.startsWith('/s/');
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
@@ -58,6 +62,9 @@ const AppContent: React.FC = () => {
         <Routes>
           {/* Rotas Públicas */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/participar" element={<ParticipatePage />} />
+          <Route path="/participar/:idOrPin" element={<ParticipatePage />} />
+          <Route path="/s/:idOrPin" element={<ParticipatePage />} />
           <Route path="/legal" element={<TermsAndPrivacyPage />} />
           <Route path="/invite/:token" element={<JoinInvitePage />} />
 

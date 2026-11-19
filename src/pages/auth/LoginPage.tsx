@@ -1,8 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { Eye, EyeOff, Loader2, CheckCircle2, Gift, Zap, Users, Trophy } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  CheckCircle2,
+  Gift,
+  Zap,
+  Users,
+  Trophy,
+  Shield,
+  KeyRound,
+  Sparkles,
+} from 'lucide-react';
 
 // ── Google SDK type ──────────────────────────────────────────────────────────
 declare global {
@@ -86,12 +98,20 @@ const Feature: React.FC<{ icon: React.ReactNode; color: string; text: string }> 
 
 // ── Main component ───────────────────────────────────────────────────────────
 export const LoginPage: React.FC = () => {
-  const { loginWithGoogle, loginWithEmail, register, isAuthenticated, needsProfileCompletion } =
+  const { loginWithGoogle, loginWithEmail, register, isAuthenticated, needsProfileCompletion, user } =
     useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  const [tab, setTab] = useState<Tab>('login');
+  const initialMode =
+    searchParams.get('type') === 'admin' || searchParams.get('role') === 'admin'
+      ? 'admin'
+      : 'participant';
+  const initialTab = (searchParams.get('tab') as Tab) || 'login';
+
+  const [accountMode, setAccountMode] = useState<'participant' | 'admin'>(initialMode);
+  const [tab, setTab] = useState<Tab>(initialTab);
   const isInitializedRef = useRef(false);
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
   const hasRealGoogle = !!GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.includes('cole_seu');
@@ -113,9 +133,15 @@ export const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(needsProfileCompletion ? '/complete-profile' : '/dashboard');
+      if (needsProfileCompletion) {
+        navigate('/complete-profile');
+      } else if (user?.role === 'ADMINISTRATOR' || user?.role === 'SUPER_ADMIN') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     }
-  }, [isAuthenticated, needsProfileCompletion, navigate]);
+  }, [isAuthenticated, needsProfileCompletion, user, navigate]);
 
   // Inicializa o Google Identity de forma silenciosa para quando o usuário clicar no botão
   const initGoogleAuth = () => {
@@ -208,8 +234,14 @@ export const LoginPage: React.FC = () => {
     }
     setRegLoading(true);
     try {
-      await register(regName, regEmail, regPassword, regConfirm);
-      toast.success('Conta criada com sucesso!');
+      await register(regName, regEmail, regPassword, regConfirm, {
+        accountType: accountMode === 'admin' ? 'ADMINISTRATOR' : 'PARTICIPANT',
+      });
+      toast.success(
+        accountMode === 'admin'
+          ? 'Conta de Administrador criada com sucesso!'
+          : 'Conta de Participante criada com sucesso!'
+      );
     } catch (err: any) {
       const detailsMsg = err.response?.data?.details?.[0]?.message;
       toast.error(detailsMsg || err.response?.data?.error || err.message || 'Erro ao criar conta.');
@@ -297,14 +329,57 @@ export const LoginPage: React.FC = () => {
           {/* Card */}
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl shadow-black/40">
 
+            {/* Seletor de Modo: Participante vs Administrador */}
+            <div className="flex bg-black/25 p-1 rounded-2xl mb-6 border border-white/10">
+              <button
+                type="button"
+                onClick={() => setAccountMode('participant')}
+                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${
+                  accountMode === 'participant'
+                    ? 'bg-yellow-400 text-[#210047] shadow-lg shadow-yellow-400/20'
+                    : 'text-white/60 hover:text-white'
+                }`}
+              >
+                <span>🎮 Sou Participante</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setAccountMode('admin')}
+                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${
+                  accountMode === 'admin'
+                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
+                    : 'text-white/60 hover:text-white'
+                }`}
+              >
+                <span>👑 Sou Administrador</span>
+              </button>
+            </div>
+
             {/* Heading */}
-            <div className="text-center mb-7">
+            <div className="text-center mb-6">
+              {accountMode === 'admin' && (
+                <div className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-200 text-[11px] font-bold mb-2">
+                  <Shield className="w-3.5 h-3.5 text-purple-300" />
+                  <span>Área do Organizador / Administrador</span>
+                </div>
+              )}
               <h2 className="text-2xl font-black text-white">
-                {tab === 'login' ? 'Bem-vindo de volta! 👋' : 'Criar sua conta 🎉'}
+                {accountMode === 'admin'
+                  ? tab === 'login'
+                    ? 'Painel do Administrador 👑'
+                    : 'Criar Conta de Administrador 👑'
+                  : tab === 'login'
+                  ? 'Bem-vindo de volta! 👋'
+                  : 'Criar sua conta 🎉'}
               </h2>
-              <p className="text-white/50 text-sm mt-1">
-                {tab === 'login'
-                  ? 'Entre para participar dos seus sorteios'
+              <p className="text-white/50 text-xs sm:text-sm mt-1">
+                {accountMode === 'admin'
+                  ? tab === 'login'
+                    ? 'Acesse para gerenciar seus grupos e sorteios'
+                    : 'Cadastre-se para criar e auditar sorteios oficiais'
+                  : tab === 'login'
+                  ? 'Entre para concorrer aos prêmios dos seus sorteios'
                   : 'Junte-se à plataforma gratuitamente'}
               </p>
             </div>
@@ -478,15 +553,59 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={regLoading}
-                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-base rounded-xl shadow-lg shadow-yellow-400/25 transition disabled:opacity-60 flex items-center justify-center space-x-2 !mt-5"
+                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-base rounded-xl shadow-lg shadow-yellow-400/25 transition disabled:opacity-60 flex items-center justify-center space-x-2 !mt-5 cursor-pointer"
                 >
                   {regLoading ? (
                     <><Loader2 className="w-5 h-5 animate-spin" /><span>Criando…</span></>
                   ) : (
-                    <span>Criar conta grátis</span>
+                    <span>
+                      {accountMode === 'admin'
+                        ? 'Criar Conta de Administrador 👑'
+                        : 'Criar conta grátis 🎉'}
+                    </span>
                   )}
                 </button>
               </form>
+            )}
+
+            {/* Banner de atalho estilo Kahoot ou alternância */}
+            {accountMode === 'participant' ? (
+              <div className="mt-5 p-3.5 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 text-center space-y-1">
+                <div className="text-xs text-yellow-300 font-bold flex items-center justify-center space-x-1.5">
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>Tem um PIN ou Link de Sorteio?</span>
+                </div>
+                <p className="text-[11px] text-white/60">
+                  Entre direto na sala do sorteio e garanta seu bilhete:
+                </p>
+                <div>
+                  <Link
+                    to="/participar"
+                    className="inline-flex items-center text-xs font-black text-yellow-400 hover:text-yellow-300 hover:underline pt-0.5"
+                  >
+                    <span>Entrar no Sorteio com PIN (Estilo Kahoot) →</span>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-5 p-3.5 rounded-2xl bg-purple-500/15 border border-purple-400/25 text-center space-y-1">
+                <div className="text-xs text-purple-200 font-bold flex items-center justify-center space-x-1.5">
+                  <Shield className="w-3.5 h-3.5 text-purple-300" />
+                  <span>Painel do Organizador de Sorteios</span>
+                </div>
+                <p className="text-[11px] text-white/60">
+                  Quer apenas concorrer em um sorteio como jogador?
+                </p>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setAccountMode('participant')}
+                    className="text-xs font-bold text-yellow-300 hover:underline pt-0.5 cursor-pointer"
+                  >
+                    Alternar para Modo Participante 🎮
+                  </button>
+                </div>
+              </div>
             )}
 
             {/* Dev mock profiles */}

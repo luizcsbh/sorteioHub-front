@@ -33,7 +33,13 @@ interface AuthContextType {
   needsProfileCompletion: boolean;
   loginWithGoogle: (credential?: string, mockProfile?: any) => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, confirmPassword?: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword?: string,
+    extraData?: { cpf?: string; phone?: string; accountType?: 'PARTICIPANT' | 'ADMINISTRATOR' }
+  ) => Promise<any>;
   completeProfile: (data: any) => Promise<void>;
   updateProfile: (data: any) => Promise<void>;
   changePassword: (data: { currentPassword?: string; newPassword: string; confirmPassword?: string }) => Promise<void>;
@@ -103,7 +109,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (name: string, email: string, password: string, confirmPassword?: string) => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword?: string,
+    extraData?: { cpf?: string; phone?: string; accountType?: 'PARTICIPANT' | 'ADMINISTRATOR' }
+  ) => {
     setIsLoading(true);
     try {
       const res = await api.post('/auth/register', {
@@ -111,6 +123,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         password,
         confirmPassword: confirmPassword || password,
+        cpf: extraData?.cpf,
+        phone: extraData?.phone,
+        accountType: extraData?.accountType,
       });
       const { token: newToken, user: newUser, needsProfileCompletion: needsCompletion } = res.data;
 
@@ -119,6 +134,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(newToken);
       setUser(newUser);
       setNeedsProfileCompletion(needsCompletion ?? false);
+      return newUser;
     } finally {
       setIsLoading(false);
     }

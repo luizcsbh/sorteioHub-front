@@ -18,6 +18,11 @@ import {
   ArrowRight,
   Ticket,
   Copy,
+  Share2,
+  QrCode,
+  ExternalLink,
+  KeyRound,
+  Users,
 } from 'lucide-react';
 
 export const RaffleDetailsPage: React.FC = () => {
@@ -32,11 +37,32 @@ export const RaffleDetailsPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showSharePanel, setShowSharePanel] = useState(false);
 
   // Modais de Confirmação
   const [showDrawConfirm, setShowDrawConfirm] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+
+  // PIN = primeiros 8 chars do UUID em maiúsculo (curto e fácil de lembrar)
+  const getPin = (raffleId: string) => raffleId.slice(0, 8).toUpperCase();
+  const getShareLink = (raffleId: string) =>
+    `${window.location.origin}/participar/${raffleId.slice(0, 8).toUpperCase()}`;
+  const getFullLink = (raffleId: string) =>
+    `${window.location.origin}/participar/${raffleId}`;
+
+  const copyPin = (raffleId: string) => {
+    navigator.clipboard.writeText(getPin(raffleId));
+    toast.info('PIN copiado! Envie para os participantes.', 'PIN Copiado');
+  };
+  const copyLink = (raffleId: string) => {
+    navigator.clipboard.writeText(getShareLink(raffleId));
+    toast.info('Link curto copiado! Envie para os participantes.', 'Link Copiado');
+  };
+  const copyFullLink = (raffleId: string) => {
+    navigator.clipboard.writeText(getFullLink(raffleId));
+    toast.info('Link completo copiado.', 'Link Copiado');
+  };
 
   const fetchRaffle = async () => {
     setLoading(true);
@@ -181,6 +207,116 @@ export const RaffleDetailsPage: React.FC = () => {
                 Cancelar
               </button>
             )}
+
+            {/* Botão Compartilhar PIN (sempre visível para gestor) */}
+            <button
+              onClick={() => setShowSharePanel((v) => !v)}
+              className="px-3.5 py-1.5 bg-yellow-400 hover:bg-yellow-300 text-[#210047] rounded-lg text-xs font-black transition flex items-center space-x-1.5 shadow-sm"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>PIN / Link Kahoot</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Painel de compartilhamento de PIN estilo Kahoot */}
+      {raffle && isManager && showSharePanel && (
+        <div className="bg-[#210047] text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-purple-800/50 space-y-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg">
+                <KeyRound className="w-5 h-5 text-[#210047]" />
+              </div>
+              <div>
+                <h3 className="font-black text-white text-base">Compartilhar Acesso ao Sorteio</h3>
+                <p className="text-xs text-white/60">
+                  Envie o PIN ou link para os participantes entrarem — igual ao Kahoot!
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowSharePanel(false)}
+              className="text-white/50 hover:text-white transition text-xs"
+            >
+              Fechar ✕
+            </button>
+          </div>
+
+          {/* PIN em destaque */}
+          <div className="text-center space-y-2">
+            <div className="text-xs font-bold uppercase tracking-widest text-yellow-300">
+              PIN do Sorteio — Os participantes digitam isso na tela de entrada
+            </div>
+            <div className="inline-flex items-center space-x-4 bg-white/10 border border-white/20 rounded-2xl px-8 py-4">
+              <span className="text-5xl sm:text-6xl font-black tracking-widest font-mono text-yellow-400 select-all">
+                {getPin(raffle.id)}
+              </span>
+              <button
+                onClick={() => copyPin(raffle.id)}
+                className="p-3 rounded-xl bg-yellow-400/20 hover:bg-yellow-400/40 text-yellow-300 transition"
+                title="Copiar PIN"
+              >
+                <Copy className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Link curto e link completo */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div className="bg-white/10 border border-white/15 rounded-2xl p-4 space-y-2">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-white/60 flex items-center space-x-1.5">
+                <Share2 className="w-3.5 h-3.5" />
+                <span>Link Curto (Recomendado)</span>
+              </div>
+              <div className="font-mono text-xs text-yellow-200 break-all bg-black/20 rounded-xl px-3 py-2 select-all">
+                {getShareLink(raffle.id)}
+              </div>
+              <button
+                onClick={() => copyLink(raffle.id)}
+                className="w-full py-2 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-xs transition flex items-center justify-center space-x-1.5"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                <span>Copiar Link Curto</span>
+              </button>
+            </div>
+
+            <div className="bg-white/10 border border-white/15 rounded-2xl p-4 space-y-2">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-white/60 flex items-center space-x-1.5">
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Link Completo (UUID)</span>
+              </div>
+              <div className="font-mono text-xs text-purple-200 break-all bg-black/20 rounded-xl px-3 py-2 select-all">
+                {getFullLink(raffle.id)}
+              </div>
+              <button
+                onClick={() => copyFullLink(raffle.id)}
+                className="w-full py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-xs transition flex items-center justify-center space-x-1.5"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                <span>Copiar Link Completo</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Como funciona */}
+          <div className="pt-2 border-t border-white/10 text-xs text-white/50 space-y-1">
+            <div className="font-semibold text-white/70 text-[11px] uppercase tracking-wider">
+              Como os participantes entram:
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center pt-1">
+              {[
+                { step: '1', label: 'Acessa', desc: 'sorteiohub.com.br/participar' },
+                { step: '2', label: 'Digita', desc: `PIN: ${getPin(raffle.id)}` },
+                { step: '3', label: 'Concorre!', desc: 'Bilhete emitido automaticamente 🎉' },
+              ].map(({ step, label, desc }) => (
+                <div key={step} className="bg-white/5 rounded-xl p-2 border border-white/10">
+                  <div className="text-yellow-400 font-black text-sm">{step}</div>
+                  <div className="font-bold text-white/80 text-xs">{label}</div>
+                  <div className="text-white/50 text-[10px]">{desc}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
