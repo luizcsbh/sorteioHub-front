@@ -80,6 +80,8 @@ export const LoginPage: React.FC = () => {
 
   const [tab, setTab] = useState<Tab>('login');
   const googleBtnRef = useRef<HTMLDivElement>(null);
+  const isInitializedRef = useRef(false);
+  const isRenderedRef = useRef(false);
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
   const hasRealGoogle = !!GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.includes('cole_seu');
 
@@ -104,7 +106,7 @@ export const LoginPage: React.FC = () => {
     }
   }, [isAuthenticated, needsProfileCompletion, navigate]);
 
-  // Google SDK init
+  // Google SDK init - executado uma única vez
   useEffect(() => {
     if (!hasRealGoogle) return;
 
@@ -122,7 +124,7 @@ export const LoginPage: React.FC = () => {
       if (checkAndInit()) {
         clearInterval(interval);
       }
-    }, 150);
+    }, 200);
 
     const timer = setTimeout(() => clearInterval(interval), 4000);
     return () => {
@@ -130,36 +132,44 @@ export const LoginPage: React.FC = () => {
       clearTimeout(timer);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasRealGoogle, tab]);
+  }, [hasRealGoogle]);
 
   const initGoogle = () => {
     try {
       if (!window.google?.accounts?.id || !googleBtnRef.current) return;
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: async (response: { credential: string }) => {
-          setGoogleLoading(true);
-          try {
-            await loginWithGoogle(response.credential);
-          } catch (err: any) {
-            toast.error(err.response?.data?.error || err.message || 'Erro ao entrar com Google.');
-          } finally {
-            setGoogleLoading(false);
-          }
-        },
-      });
 
-      const containerWidth = googleBtnRef.current.offsetWidth || 340;
-      const safeWidth = Math.min(Math.max(containerWidth, 200), 400);
+      if (!isInitializedRef.current) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: async (response: { credential: string }) => {
+            setGoogleLoading(true);
+            try {
+              await loginWithGoogle(response.credential);
+            } catch (err: any) {
+              toast.error(err.response?.data?.error || err.message || 'Erro ao entrar com Google.');
+            } finally {
+              setGoogleLoading(false);
+            }
+          },
+        });
+        isInitializedRef.current = true;
+      }
 
-      window.google.accounts.id.renderButton(googleBtnRef.current, {
-        theme: 'outline',
-        size: 'large',
-        shape: 'rectangular',
-        width: safeWidth,
-        text: 'signin_with',
-        locale: 'pt-BR',
-      });
+      if (!isRenderedRef.current && googleBtnRef.current) {
+        googleBtnRef.current.innerHTML = '';
+        const containerWidth = googleBtnRef.current.offsetWidth || 340;
+        const safeWidth = Math.min(Math.max(containerWidth, 200), 400);
+
+        window.google.accounts.id.renderButton(googleBtnRef.current, {
+          theme: 'outline',
+          size: 'large',
+          shape: 'rectangular',
+          width: safeWidth,
+          text: 'signin_with',
+          locale: 'pt-BR',
+        });
+        isRenderedRef.current = true;
+      }
     } catch (e) {
       console.warn('[SorteioHub] Google SDK init:', e);
     }
