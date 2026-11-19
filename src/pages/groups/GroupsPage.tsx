@@ -99,11 +99,11 @@ export const GroupsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center space-x-2">
-            <Users className="w-7 h-7 text-indigo-600" />
+          <h1 className="text-2xl font-bold text-white flex items-center space-x-2">
+            <Users className="w-7 h-7 text-yellow-400" />
             <span>Grupos Fechados</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-white/60 mt-1">
             Comunidades fechadas exclusivas para realização e participação de sorteios
           </p>
         </div>
@@ -111,16 +111,16 @@ export const GroupsPage: React.FC = () => {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setShowJoinModal(true)}
-            className="inline-flex items-center px-4 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm"
+            className="inline-flex items-center px-4 py-2 border border-white/20 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 backdrop-blur transition shadow-sm"
           >
-            <KeyRound className="w-4 h-4 mr-1.5 text-indigo-600" />
+            <KeyRound className="w-4 h-4 mr-1.5 text-yellow-400" />
             Entrar com Código / Token
           </button>
 
           {isManagerOrAdmin && (
             <button
               onClick={() => setShowCreateModal(true)}
-              className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow transition"
+              className="inline-flex items-center px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-950 rounded-xl text-xs font-black shadow-lg shadow-yellow-400/20 transition"
             >
               <Plus className="w-4 h-4 mr-1.5" />
               Criar Novo Grupo
@@ -131,17 +131,17 @@ export const GroupsPage: React.FC = () => {
 
       {/* Lista de Grupos */}
       {loading ? (
-        <div className="py-20 text-center text-slate-400">Carregando grupos...</div>
+        <div className="py-20 text-center text-white/40">Carregando grupos...</div>
       ) : groups.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-md mx-auto space-y-4">
-          <Users className="w-12 h-12 text-slate-300 mx-auto" />
-          <h3 className="text-base font-semibold text-slate-800">Você ainda não participa de nenhum grupo</h3>
-          <p className="text-xs text-slate-500">
+        <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/15 p-12 text-center max-w-md mx-auto space-y-4">
+          <Users className="w-12 h-12 text-white/30 mx-auto" />
+          <h3 className="text-base font-bold text-white">Você ainda não participa de nenhum grupo</h3>
+          <p className="text-xs text-white/60">
             Peça o link de convite ao administrador do seu grupo fechado ou use um token de acesso para ingressar.
           </p>
           <button
             onClick={() => setShowJoinModal(true)}
-            className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg shadow"
+            className="inline-flex items-center px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-950 text-xs font-black rounded-xl shadow-lg shadow-yellow-400/20"
           >
             <KeyRound className="w-4 h-4 mr-1.5" />
             Inserir Token de Convite
@@ -157,55 +157,55 @@ export const GroupsPage: React.FC = () => {
             return (
               <div
                 key={group.id}
-                className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm hover:border-indigo-200 transition flex flex-col justify-between space-y-4"
+                className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/15 p-6 shadow-xl hover:border-yellow-400/40 hover:bg-white/15 transition flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         group.status === 'ATIVO'
-                          ? 'bg-emerald-50 text-emerald-700'
-                          : 'bg-slate-100 text-slate-600'
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          : 'bg-white/10 text-white/60 border border-white/15'
                       }`}
                     >
                       {group.status}
                     </span>
 
                     {isManager && (
-                      <span className="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
+                      <span className="text-[10px] font-semibold text-yellow-300 bg-yellow-400/10 border border-yellow-400/20 px-2 py-0.5 rounded">
                         Você é o Gestor
                       </span>
                     )}
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">{group.name}</h3>
-                    <p className="text-xs text-slate-600 line-clamp-2 mt-1">
+                    <h3 className="text-lg font-bold text-white">{group.name}</h3>
+                    <p className="text-xs text-white/60 line-clamp-2 mt-1">
                       {group.description || 'Sem descrição cadastrada.'}
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
                   <div className="flex items-center space-x-3">
                     <div>
-                      <strong>{group._count?.members || 1}</strong> membros
+                      <strong className="text-white">{group._count?.members || 1}</strong> membros
                     </div>
                     <div>
-                      <strong>{group._count?.raffles || 0}</strong> sorteios
+                      <strong className="text-white">{group._count?.raffles || 0}</strong> sorteios
                     </div>
                   </div>
 
                   {isActive ? (
                     <Link
                       to={`/groups/${group.id}`}
-                      className="inline-flex items-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition"
+                      className="inline-flex items-center text-xs font-bold text-yellow-400 hover:text-yellow-300 transition"
                     >
                       <span>Acessar</span>
                       <ArrowRight className="w-3.5 h-3.5 ml-1" />
                     </Link>
                   ) : (
-                    <span className="text-amber-600 font-medium">Aprovação Pendente</span>
+                    <span className="text-amber-400 font-medium">Aprovação Pendente</span>
                   )}
                 </div>
               </div>
@@ -216,13 +216,13 @@ export const GroupsPage: React.FC = () => {
 
       {/* Modal Criar Grupo */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900/90 backdrop-blur-2xl rounded-2xl max-w-md w-full p-6 shadow-2xl border border-white/15 space-y-4 text-white">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-bold text-slate-900">Novo Grupo Fechado</h2>
+              <h2 className="text-lg font-bold text-white">Novo Grupo Fechado</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-white/40 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -230,8 +230,8 @@ export const GroupsPage: React.FC = () => {
 
             <form onSubmit={handleCreateGroup} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Nome do Grupo <span className="text-rose-500">*</span>
+                <label className="block text-xs font-medium text-white/80 mb-1">
+                  Nome do Grupo <span className="text-rose-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -239,32 +239,32 @@ export const GroupsPage: React.FC = () => {
                   placeholder="Ex: Clientes VIP 2026, Colaboradores..."
                   value={newGroupName}
                   onChange={(e) => setNewGroupName(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Descrição</label>
+                <label className="block text-xs font-medium text-white/80 mb-1">Descrição</label>
                 <textarea
                   rows={3}
                   placeholder="Explique o objetivo deste grupo e as regras..."
                   value={newGroupDesc}
                   onChange={(e) => setNewGroupDesc(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none"
                 />
               </div>
 
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                <label className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
+              <div className="p-3 bg-white/5 border border-white/10 rounded-xl space-y-2">
+                <label className="flex items-center space-x-2 text-xs font-medium text-white/80 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={autoApprove}
                     onChange={(e) => setAutoApprove(e.target.checked)}
-                    className="rounded text-indigo-600 focus:ring-indigo-500"
+                    className="rounded text-yellow-400 focus:ring-yellow-400 bg-white/10 border-white/20"
                   />
                   <span>Aprovação automática ao usar convite válido</span>
                 </label>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-white/50">
                   Se desativado, o participante entrará como pendente até você aprová-lo.
                 </p>
               </div>
@@ -273,14 +273,14 @@ export const GroupsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-50"
+                  className="px-4 py-2 border border-white/20 rounded-xl text-xs font-medium text-white hover:bg-white/10 transition"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-yellow-400 text-slate-950 font-black rounded-xl text-xs hover:bg-yellow-300 disabled:opacity-50 transition shadow-lg shadow-yellow-400/20"
                 >
                   {createLoading ? 'Criando...' : 'Salvar Grupo'}
                 </button>
@@ -292,16 +292,16 @@ export const GroupsPage: React.FC = () => {
 
       {/* Modal Entrar via Token */}
       {showJoinModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900/90 backdrop-blur-2xl rounded-2xl max-w-md w-full p-6 shadow-2xl border border-white/15 space-y-4 text-white">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-bold text-slate-900">Ingressar com Convite</h2>
+              <h2 className="text-lg font-bold text-white">Ingressar com Convite</h2>
               <button
                 onClick={() => {
                   setShowJoinModal(false);
                   setJoinMessage(null);
                 }}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-white/40 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -318,7 +318,7 @@ export const GroupsPage: React.FC = () => {
 
             <form onSubmit={handleJoinGroup} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-white/80 mb-1">
                   Código ou Token do Convite
                 </label>
                 <input
@@ -327,7 +327,7 @@ export const GroupsPage: React.FC = () => {
                   placeholder="Cole o código do convite fornecido pelo gestor"
                   value={tokenInput}
                   onChange={(e) => setTokenInput(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 font-mono"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none font-mono"
                 />
               </div>
 
@@ -338,14 +338,14 @@ export const GroupsPage: React.FC = () => {
                     setShowJoinModal(false);
                     setJoinMessage(null);
                   }}
-                  className="px-4 py-2 border border-slate-300 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-50"
+                  className="px-4 py-2 border border-white/20 rounded-xl text-xs font-medium text-white hover:bg-white/10 transition"
                 >
                   Fechar
                 </button>
                 <button
                   type="submit"
                   disabled={joinLoading}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-yellow-400 text-slate-950 font-black rounded-xl text-xs hover:bg-yellow-300 disabled:opacity-50 transition shadow-lg shadow-yellow-400/20"
                 >
                   {joinLoading ? 'Validando...' : 'Confirmar Entrada'}
                 </button>

@@ -30,17 +30,17 @@ export const CookieConsent: React.FC = () => {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-md z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
-      <div className="bg-slate-900/95 text-white backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-slate-700/60 relative">
+      <div className="bg-slate-950/90 text-white backdrop-blur-xl rounded-2xl p-5 shadow-2xl border border-white/15 relative">
         <button
           onClick={handleAcceptEssential}
-          className="absolute top-3 right-3 text-slate-400 hover:text-white transition p-1"
+          className="absolute top-3 right-3 text-white/40 hover:text-white transition p-1"
           aria-label="Fechar"
         >
           <X className="w-4 h-4" />
         </button>
 
         <div className="flex items-start space-x-3.5">
-          <div className="p-2.5 bg-indigo-600/30 text-yellow-400 rounded-xl border border-yellow-400/20 flex-shrink-0 mt-0.5">
+          <div className="p-2.5 bg-yellow-400/10 text-yellow-400 rounded-xl border border-yellow-400/20 flex-shrink-0 mt-0.5">
             <Cookie className="w-6 h-6" />
           </div>
 
@@ -50,7 +50,7 @@ export const CookieConsent: React.FC = () => {
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-white/70 leading-relaxed">
               Utilizamos cookies essenciais para autenticação, segurança e conformidade com a LGPD. Ao continuar, você concorda com nossos{' '}
               <Link to="/legal" className="text-yellow-400 hover:text-yellow-300 underline font-medium">
                 Termos e Política de Privacidade
@@ -59,18 +59,18 @@ export const CookieConsent: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-end gap-2 mt-4 pt-3 border-t border-slate-800">
+        <div className="flex flex-col sm:flex-row items-center justify-end gap-2 mt-4 pt-3 border-t border-white/10">
           <button
             type="button"
             onClick={handleAcceptEssential}
-            className="w-full sm:w-auto px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition"
+            className="w-full sm:w-auto px-3.5 py-2 rounded-xl text-xs font-semibold text-white/70 hover:text-white hover:bg-white/10 transition"
           >
             Apenas Necessários
           </button>
           <button
             type="button"
             onClick={handleAcceptAll}
-            className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold bg-yellow-400 hover:bg-yellow-300 text-slate-950 shadow-md shadow-yellow-400/20 transition cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-black bg-yellow-400 hover:bg-yellow-300 text-slate-950 shadow-md shadow-yellow-400/20 transition cursor-pointer"
           >
             Aceitar Todos
           </button>

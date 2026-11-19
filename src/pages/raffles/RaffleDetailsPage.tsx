@@ -322,50 +322,50 @@ export const RaffleDetailsPage: React.FC = () => {
       )}
 
       {/* Card Principal */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div className="bg-white/10 backdrop-blur-xl rounded-3xl border border-white/15 shadow-2xl overflow-hidden text-white">
         <div className="p-8 space-y-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="space-y-1">
-              <div className="flex items-center space-x-2 text-xs text-slate-500">
-                <span className="font-semibold text-indigo-600">Grupo: {raffle.group?.name}</span>
+              <div className="flex items-center space-x-2 text-xs text-white/60">
+                <span className="font-bold text-yellow-300">Grupo: {raffle.group?.name}</span>
                 <span>•</span>
                 <span>{raffle._count?.participants || 0} participantes inscritos</span>
               </div>
-              <h1 className="text-3xl font-extrabold text-slate-900">{raffle.title}</h1>
+              <h1 className="text-3xl font-black text-white">{raffle.title}</h1>
             </div>
 
-            <div className="p-4 bg-gradient-to-tr from-indigo-50 to-violet-50 border border-indigo-100 rounded-2xl text-right">
-              <div className="text-xs uppercase font-bold text-indigo-600 tracking-wider">Prêmio</div>
-              <div className="text-2xl font-black text-indigo-950">{raffle.prize}</div>
-              <div className="text-[11px] text-slate-500 mt-0.5">
+            <div className="p-5 bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 rounded-2xl text-right shadow-lg">
+              <div className="text-[11px] uppercase font-black tracking-wider text-slate-950/70">Prêmio Oficial</div>
+              <div className="text-2xl sm:text-3xl font-black text-slate-950">{raffle.prize}</div>
+              <div className="text-[11px] font-bold text-slate-950/80 mt-0.5">
                 {raffle.numberOfWinners} contemplado{raffle.numberOfWinners > 1 ? 's' : ''}
               </div>
             </div>
           </div>
 
-          <p className="text-sm text-slate-600 leading-relaxed">{raffle.description}</p>
+          <p className="text-sm text-white/70 leading-relaxed">{raffle.description}</p>
 
           {/* Cronograma */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
-            <div className="p-3 bg-slate-50 rounded-xl space-y-1">
-              <div className="text-[11px] font-medium text-slate-400">Início das Inscrições</div>
-              <div className="text-xs font-semibold text-slate-800">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-white/10">
+            <div className="p-3 bg-white/5 border border-white/10 rounded-xl space-y-1">
+              <div className="text-[11px] font-semibold text-white/50">Início das Inscrições</div>
+              <div className="text-xs font-bold text-white">
                 {new Date(raffle.participationStartDate).toLocaleDateString('pt-BR')} às{' '}
                 {new Date(raffle.participationStartDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
               </div>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-xl space-y-1">
-              <div className="text-[11px] font-medium text-slate-400">Término das Inscrições</div>
-              <div className="text-xs font-semibold text-slate-800">
+            <div className="p-3 bg-white/5 border border-white/10 rounded-xl space-y-1">
+              <div className="text-[11px] font-semibold text-white/50">Término das Inscrições</div>
+              <div className="text-xs font-bold text-white">
                 {new Date(raffle.participationEndDate).toLocaleDateString('pt-BR')} às{' '}
                 {new Date(raffle.participationEndDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
               </div>
             </div>
 
-            <div className="p-3 bg-indigo-50/60 rounded-xl space-y-1">
-              <div className="text-[11px] font-medium text-indigo-600">Data do Sorteio</div>
-              <div className="text-xs font-bold text-indigo-900">
+            <div className="p-3 bg-yellow-400/10 border border-yellow-400/20 rounded-xl space-y-1">
+              <div className="text-[11px] font-bold text-yellow-300">Data do Sorteio</div>
+              <div className="text-xs font-black text-yellow-200">
                 {new Date(raffle.drawDateTime).toLocaleDateString('pt-BR')} às{' '}
                 {new Date(raffle.drawDateTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
               </div>
@@ -374,31 +374,31 @@ export const RaffleDetailsPage: React.FC = () => {
 
           {/* Regulamento */}
           {raffle.rules && (
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-              <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-700">
-                <FileText className="w-4 h-4 text-indigo-600" />
+            <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2">
+              <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-yellow-300">
+                <FileText className="w-4 h-4 text-yellow-400" />
                 <span>Regulamento & Condições de Participação</span>
               </div>
-              <p className="text-xs text-slate-600 whitespace-pre-line leading-relaxed">
+              <p className="text-xs text-white/70 whitespace-pre-line leading-relaxed">
                 {raffle.rules}
               </p>
             </div>
           )}
 
           {/* Área de Inscrição / Bilhete */}
-          <div className="pt-4 border-t border-slate-100">
+          <div className="pt-4 border-t border-white/10">
             {raffle.status === 'DRAWN' ? (
-              <div className="p-6 bg-indigo-50 border border-indigo-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="p-6 bg-purple-950/40 border border-purple-500/30 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="space-y-1 text-center sm:text-left">
-                  <div className="text-sm font-bold text-indigo-950">Este sorteio já foi realizado!</div>
-                  <div className="text-xs text-indigo-700">
+                  <div className="text-sm font-bold text-white">Este sorteio já foi realizado!</div>
+                  <div className="text-xs text-purple-200">
                     O motor criptográfico gerou as evidências e os ganhadores oficiais.
                   </div>
                 </div>
 
                 <Link
                   to={`/raffles/${raffle.id}/results`}
-                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow flex items-center space-x-1.5 transition"
+                  className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black rounded-xl text-xs shadow-md shadow-yellow-400/20 flex items-center space-x-1.5 transition"
                 >
                   <Trophy className="w-4 h-4" />
                   <span>Ver Ganhadores & Evidências</span>
@@ -406,34 +406,34 @@ export const RaffleDetailsPage: React.FC = () => {
                 </Link>
               </div>
             ) : hasParticipated ? (
-              <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-4">
+              <div className="p-6 bg-emerald-950/40 border border-emerald-500/30 rounded-2xl space-y-4">
                 <div className="flex items-center space-x-3">
-                  <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0" />
+                  <CheckCircle className="w-6 h-6 text-emerald-400 flex-shrink-0" />
                   <div>
-                    <h3 className="text-base font-bold text-emerald-900">Você está participando deste sorteio!</h3>
-                    <p className="text-xs text-emerald-700">
+                    <h3 className="text-base font-bold text-white">Você está participando deste sorteio!</h3>
+                    <p className="text-xs text-emerald-200">
                       Sua inscrição foi confirmada e sua elegibilidade auditada. Guarde seu código de bilhete:
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-3 max-w-md">
-                  <div className="flex-1 p-3 bg-white border border-emerald-300 rounded-xl font-mono text-xs font-bold text-emerald-900 flex items-center justify-between">
+                  <div className="flex-1 p-3 bg-white/10 border border-emerald-500/40 rounded-xl font-mono text-sm font-black text-yellow-300 flex items-center justify-between">
                     <span className="flex items-center space-x-2">
-                      <Ticket className="w-4 h-4 text-emerald-600" />
+                      <Ticket className="w-4 h-4 text-yellow-400" />
                       <span>{participation?.ticketCode}</span>
                     </span>
                     <button
                       onClick={() => copyTicket(participation?.ticketCode)}
-                      className="p-1 hover:bg-slate-100 rounded text-slate-500"
+                      className="p-1 hover:bg-white/10 rounded text-white/60 hover:text-white transition"
                       title="Copiar código"
                     >
-                      {copied ? <CheckCircle className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                      {copied ? <CheckCircle className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
 
-                <div className="text-[11px] text-emerald-800">
+                <div className="text-[11px] text-white/50">
                   Confirmado em: {new Date(participation?.confirmedAt).toLocaleString('pt-BR')}
                 </div>
               </div>
@@ -452,19 +452,19 @@ export const RaffleDetailsPage: React.FC = () => {
                     </p>
                     <Link
                       to="/complete-profile"
-                      className="inline-block px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition"
+                      className="inline-block px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-950 rounded-xl text-xs font-black shadow-md shadow-yellow-400/20 transition"
                     >
                       Cadastrar CPF e Endereço Agora
                     </Link>
                   </Alert>
                 ) : (
-                  <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
-                    <label className="flex items-start space-x-3 text-xs text-slate-700 cursor-pointer">
+                  <div className="p-6 bg-white/5 border border-white/10 rounded-2xl space-y-4">
+                    <label className="flex items-start space-x-3 text-xs text-white/80 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={agreeRules}
                         onChange={(e) => setAgreeRules(e.target.checked)}
-                        className="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500"
+                        className="mt-0.5 rounded text-yellow-400 focus:ring-yellow-400"
                       />
                       <span>
                         Li e concordo com todos os termos do <strong>Regulamento deste sorteio</strong> e confirmo que meus dados de contato e endereço para entrega do prêmio estão atualizados.
@@ -474,7 +474,7 @@ export const RaffleDetailsPage: React.FC = () => {
                     <button
                       onClick={handleParticipate}
                       disabled={submitting || !agreeRules}
-                      className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow disabled:opacity-50 flex items-center space-x-2"
+                      className="px-6 py-3.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 rounded-xl text-xs font-black transition shadow-lg shadow-yellow-400/25 disabled:opacity-50 flex items-center space-x-2 cursor-pointer"
                     >
                       <Ticket className="w-4 h-4" />
                       <span>{submitting ? 'Confirmando...' : 'Confirmar Minha Participação'}</span>

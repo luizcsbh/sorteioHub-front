@@ -22,33 +22,33 @@ export const Alert: React.FC<AlertProps> = ({
     switch (variant) {
       case 'success':
         return {
-          container: 'bg-emerald-50/80 border-emerald-200 text-emerald-950',
-          icon: <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />,
-          title: 'text-emerald-900',
+          container: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-200',
+          icon: <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />,
+          title: 'text-emerald-300 font-bold',
         };
       case 'error':
         return {
-          container: 'bg-rose-50/80 border-rose-200 text-rose-950',
-          icon: <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />,
-          title: 'text-rose-900',
+          container: 'bg-rose-500/15 border-rose-500/30 text-rose-200',
+          icon: <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />,
+          title: 'text-rose-300 font-bold',
         };
       case 'warning':
         return {
-          container: 'bg-amber-50/80 border-amber-200 text-amber-950',
-          icon: <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />,
-          title: 'text-amber-900',
+          container: 'bg-amber-500/15 border-amber-500/30 text-amber-200',
+          icon: <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />,
+          title: 'text-amber-300 font-bold',
         };
       case 'lgpd':
         return {
-          container: 'bg-indigo-50/80 border-indigo-200 text-indigo-950',
-          icon: <ShieldCheck className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />,
-          title: 'text-indigo-900',
+          container: 'bg-yellow-400/15 border-yellow-400/30 text-yellow-200',
+          icon: <ShieldCheck className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />,
+          title: 'text-yellow-300 font-bold',
         };
       default:
         return {
-          container: 'bg-slate-50/80 border-slate-200 text-slate-900',
-          icon: <Info className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />,
-          title: 'text-slate-900',
+          container: 'bg-white/10 border-white/15 text-white',
+          icon: <Info className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />,
+          title: 'text-white font-bold',
         };
     }
   };

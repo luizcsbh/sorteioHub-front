@@ -149,7 +149,7 @@ export const AdminDashboardPage: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="py-20 text-center text-slate-400">Carregando painel administrativo...</div>;
+    return <div className="py-20 text-center text-white/40">Carregando painel administrativo...</div>;
   }
 
   const ind = dashboard?.indicators || {};
@@ -159,11 +159,11 @@ export const AdminDashboardPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center space-x-2">
-            <Shield className="w-7 h-7 text-indigo-600" />
+          <h1 className="text-2xl font-bold text-white flex items-center space-x-2">
+            <Shield className="w-7 h-7 text-yellow-400" />
             <span>Painel Administrativo & Governança</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-white/60 mt-1">
             Indicadores gerenciais, auditoria e relatórios de sorteios e grupos fechados
           </p>
         </div>
@@ -171,15 +171,15 @@ export const AdminDashboardPage: React.FC = () => {
         <div className="flex items-center space-x-3">
           <Link
             to="/admin/campaigns"
-            className="inline-flex items-center px-4 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm"
+            className="inline-flex items-center px-4 py-2 border border-white/20 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 backdrop-blur transition shadow-sm"
           >
-            <Send className="w-4 h-4 mr-1.5 text-indigo-600" />
+            <Send className="w-4 h-4 mr-1.5 text-yellow-400" />
             Campanhas & E-mails
           </Link>
 
           <button
             onClick={() => setShowRaffleModal(true)}
-            className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow transition"
+            className="inline-flex items-center px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black rounded-xl text-xs shadow-lg shadow-yellow-400/20 transition"
           >
             <Plus className="w-4 h-4 mr-1.5" />
             Novo Sorteio
@@ -189,66 +189,66 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* 10 Indicadores Conforme prompt.json */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Total de Usuários</div>
-          <div className="text-2xl font-bold text-slate-900">{ind.totalUsers || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Total de Usuários</div>
+          <div className="text-2xl font-bold text-white">{ind.totalUsers || 0}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Total de Grupos</div>
-          <div className="text-2xl font-bold text-slate-900">{ind.totalGroups || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Total de Grupos</div>
+          <div className="text-2xl font-bold text-white">{ind.totalGroups || 0}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Membros Ativos</div>
-          <div className="text-2xl font-bold text-emerald-600">{ind.activeMembers || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Membros Ativos</div>
+          <div className="text-2xl font-bold text-emerald-400">{ind.activeMembers || 0}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Total de Sorteios</div>
-          <div className="text-2xl font-bold text-slate-900">{ind.totalRaffles || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Total de Sorteios</div>
+          <div className="text-2xl font-bold text-yellow-400">{ind.totalRaffles || 0}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Sorteios em Andamento</div>
-          <div className="text-2xl font-bold text-indigo-600">{ind.activeRaffles || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Sorteios em Andamento</div>
+          <div className="text-2xl font-bold text-indigo-400">{ind.activeRaffles || 0}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Sorteios Encerrados</div>
-          <div className="text-2xl font-bold text-slate-900">{ind.finishedRaffles || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Sorteios Encerrados</div>
+          <div className="text-2xl font-bold text-white/80">{ind.finishedRaffles || 0}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Total de Participações</div>
-          <div className="text-2xl font-bold text-violet-600">{ind.totalParticipations || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Total de Participações</div>
+          <div className="text-2xl font-bold text-violet-400">{ind.totalParticipations || 0}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Total de Ganhadores</div>
-          <div className="text-2xl font-bold text-amber-600">{ind.totalWinners || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Total de Ganhadores</div>
+          <div className="text-2xl font-bold text-amber-400">{ind.totalWinners || 0}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Total de Notificações</div>
-          <div className="text-2xl font-bold text-slate-900">{ind.totalNotifications || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Total de Notificações</div>
+          <div className="text-2xl font-bold text-white">{ind.totalNotifications || 0}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-1">
-          <div className="text-[11px] font-medium text-slate-500">Falhas de Envio</div>
-          <div className="text-2xl font-bold text-rose-600">{ind.failedNotifications || 0}</div>
+        <div className="bg-white/10 backdrop-blur-xl p-4 rounded-2xl border border-white/15 shadow-xl space-y-1">
+          <div className="text-[11px] font-medium text-white/60">Falhas de Envio</div>
+          <div className="text-2xl font-bold text-rose-400">{ind.failedNotifications || 0}</div>
         </div>
       </div>
 
       {/* Relatórios e Auditoria */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white/10 backdrop-blur-xl rounded-3xl border border-white/15 shadow-xl overflow-hidden text-white">
+        <div className="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center space-x-2">
-              <FileText className="w-5 h-5 text-indigo-600" />
+            <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+              <FileText className="w-5 h-5 text-yellow-400" />
               <span>Relatórios Oficiais e Auditoria</span>
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-white/60">
               Dados consolidados para conformidade com a LGPD e fiscalização regulatória
             </p>
           </div>
@@ -265,10 +265,10 @@ export const AdminDashboardPage: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveReportTab(tab.id as any)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
                   activeReportTab === tab.id
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-yellow-400 text-slate-950 shadow-lg shadow-yellow-400/20'
+                    : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white'
                 }`}
               >
                 {tab.label}
@@ -281,16 +281,16 @@ export const AdminDashboardPage: React.FC = () => {
           {activeReportTab === 'users' && (
             <div className="space-y-4">
               {/* Barra de Filtro e Busca */}
-              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pb-2 border-b border-white/10">
                 <div className="flex-1 relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
                   <input
                     type="text"
                     value={userSearchQuery}
                     onChange={(e) => setUserSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && fetchUsers()}
                     placeholder="Buscar por nome, e-mail ou telefone... (Pressione Enter)"
-                    className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-slate-50/50"
+                    className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white/10 text-white placeholder-white/40"
                   />
                 </div>
 
@@ -298,18 +298,18 @@ export const AdminDashboardPage: React.FC = () => {
                   <select
                     value={userRoleFilter}
                     onChange={(e) => setUserRoleFilter(e.target.value)}
-                    className="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="text-xs px-3 py-2 rounded-xl border border-white/20 bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   >
-                    <option value="">Todos os Papéis</option>
-                    <option value="PARTICIPANT">Apenas Participantes</option>
-                    <option value="ADMINISTRATOR">Apenas Administradores</option>
-                    <option value="SUPER_ADMIN">Apenas Super Admins</option>
+                    <option value="" className="bg-slate-900 text-white">Todos os Papéis</option>
+                    <option value="PARTICIPANT" className="bg-slate-900 text-white">Apenas Participantes</option>
+                    <option value="ADMINISTRATOR" className="bg-slate-900 text-white">Apenas Administradores</option>
+                    <option value="SUPER_ADMIN" className="bg-slate-900 text-white">Apenas Super Admins</option>
                   </select>
 
                   <button
                     onClick={fetchUsers}
                     disabled={usersLoading}
-                    className="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition disabled:opacity-50"
+                    className="p-2 rounded-xl border border-white/20 hover:bg-white/20 text-white transition disabled:opacity-50"
                     title="Recarregar Usuários"
                   >
                     <RefreshCw className={`w-4 h-4 ${usersLoading ? 'animate-spin' : ''}`} />
@@ -319,18 +319,18 @@ export const AdminDashboardPage: React.FC = () => {
 
               {/* Tabela de Usuários */}
               {usersLoading ? (
-                <div className="py-12 text-center text-slate-400 text-xs">
+                <div className="py-12 text-center text-white/40 text-xs">
                   Carregando lista de usuários...
                 </div>
               ) : usersList.length === 0 ? (
-                <div className="py-12 text-center text-slate-400 text-xs">
+                <div className="py-12 text-center text-white/40 text-xs">
                   Nenhum usuário encontrado com os filtros aplicados.
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px]">
+                      <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
                         <th className="pb-3">Usuário</th>
                         <th className="pb-3">Papel Atual</th>
                         <th className="pb-3">Contato</th>
@@ -339,61 +339,61 @@ export const AdminDashboardPage: React.FC = () => {
                         <th className="pb-3 text-right">Ação de Permissão</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-white/10">
                       {usersList.map((u: any) => {
                         const isSelf = currentUser?.id === u.id;
                         return (
-                          <tr key={u.id} className="hover:bg-slate-50 transition">
+                          <tr key={u.id} className="hover:bg-white/5 transition">
                             <td className="py-3">
                               <div className="flex items-center space-x-3">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold flex items-center justify-center text-xs shadow-sm">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 text-slate-950 font-black flex items-center justify-center text-xs shadow-sm">
                                   {u.name?.charAt(0).toUpperCase() || 'U'}
                                 </div>
                                 <div>
-                                  <div className="font-semibold text-slate-800 flex items-center space-x-1.5">
+                                  <div className="font-semibold text-white flex items-center space-x-1.5">
                                     <span>{u.name}</span>
                                     {isSelf && (
-                                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-200">
+                                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-yellow-400/20 text-yellow-300 border border-yellow-400/30">
                                         Você
                                       </span>
                                     )}
                                   </div>
-                                  <div className="text-[11px] text-slate-400">{u.email}</div>
+                                  <div className="text-[11px] text-white/40">{u.email}</div>
                                 </div>
                               </div>
                             </td>
 
                             <td className="py-3">
                               {u.role === 'SUPER_ADMIN' ? (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">
-                                  <Shield className="w-3 h-3 mr-1 text-purple-600" />
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                  <Shield className="w-3 h-3 mr-1 text-purple-400" />
                                   Super Admin
                                 </span>
                               ) : u.role === 'ADMINISTRATOR' ? (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
-                                  <Shield className="w-3 h-3 mr-1 text-indigo-600" />
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-400/20 text-yellow-300 border border-yellow-400/30">
+                                  <Shield className="w-3 h-3 mr-1 text-yellow-400" />
                                   Administrador
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                                  <Users className="w-3 h-3 mr-1 text-slate-500" />
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-white/70 border border-white/15">
+                                  <Users className="w-3 h-3 mr-1 text-white/50" />
                                   Participante
                                 </span>
                               )}
                             </td>
 
-                            <td className="py-3 text-slate-600">
-                              {u.phone || <span className="text-slate-300">Não informado</span>}
+                            <td className="py-3 text-white/70">
+                              {u.phone || <span className="text-white/30">Não informado</span>}
                             </td>
 
-                            <td className="py-3 font-mono text-slate-500">
-                              {u.cpfMasked || <span className="text-slate-300">Não informado</span>}
+                            <td className="py-3 font-mono text-white/60">
+                              {u.cpfMasked || <span className="text-white/30">Não informado</span>}
                             </td>
 
-                            <td className="py-3 text-slate-600">
-                              <span className="text-slate-800 font-semibold">{u._count?.tickets || 0}</span> bilhetes
+                            <td className="py-3 text-white/70">
+                              <span className="text-white font-semibold">{u._count?.tickets || 0}</span> bilhetes
                               {' · '}
-                              <span className="text-slate-800 font-semibold">{u._count?.groupMemberships || 0}</span> grupos
+                              <span className="text-white font-semibold">{u._count?.groupMemberships || 0}</span> grupos
                             </td>
 
                             <td className="py-3 text-right">
@@ -403,7 +403,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     <button
                                       disabled={updatingUserId === u.id}
                                       onClick={() => handleRoleChange(u.id, 'ADMINISTRATOR', u.name)}
-                                      className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition border border-indigo-200 flex items-center space-x-1 disabled:opacity-50"
+                                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-yellow-400/20 text-yellow-300 hover:bg-yellow-400/30 transition border border-yellow-400/30 flex items-center space-x-1 disabled:opacity-50"
                                       title="Promover usuário a Administrador"
                                     >
                                       <UserCheck className="w-3 h-3 mr-1" />
@@ -412,7 +412,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     <button
                                       disabled={updatingUserId === u.id}
                                       onClick={() => handleRoleChange(u.id, 'SUPER_ADMIN', u.name)}
-                                      className="px-2 py-1 rounded-lg text-[11px] font-semibold bg-purple-50 text-purple-700 hover:bg-purple-100 transition border border-purple-200 disabled:opacity-50"
+                                      className="px-2 py-1 rounded-lg text-[11px] font-bold bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition border border-purple-500/30 disabled:opacity-50"
                                       title="Promover a Super Admin"
                                     >
                                       Super Admin
@@ -425,7 +425,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     <button
                                       disabled={updatingUserId === u.id}
                                       onClick={() => handleRoleChange(u.id, 'SUPER_ADMIN', u.name)}
-                                      className="px-2 py-1 rounded-lg text-[11px] font-semibold bg-purple-50 text-purple-700 hover:bg-purple-100 transition border border-purple-200 disabled:opacity-50"
+                                      className="px-2 py-1 rounded-lg text-[11px] font-bold bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition border border-purple-500/30 disabled:opacity-50"
                                       title="Promover a Super Admin"
                                     >
                                       Super Admin
@@ -433,7 +433,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     <button
                                       disabled={updatingUserId === u.id}
                                       onClick={() => handleRoleChange(u.id, 'PARTICIPANT', u.name)}
-                                      className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-amber-50 text-amber-700 hover:bg-amber-100 transition border border-amber-200 flex items-center space-x-1 disabled:opacity-50"
+                                      className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white/10 text-white/70 hover:bg-white/20 transition border border-white/20 flex items-center space-x-1 disabled:opacity-50"
                                       title="Rebaixar para Participante comum"
                                     >
                                       <UserX className="w-3 h-3 mr-1" />
@@ -447,7 +447,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     <button
                                       disabled={updatingUserId === u.id}
                                       onClick={() => handleRoleChange(u.id, 'ADMINISTRATOR', u.name)}
-                                      className="px-2 py-1 rounded-lg text-[11px] font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition border border-indigo-200 disabled:opacity-50"
+                                      className="px-2 py-1 rounded-lg text-[11px] font-bold bg-yellow-400/20 text-yellow-300 hover:bg-yellow-400/30 transition border border-yellow-400/30 disabled:opacity-50"
                                       title="Mudar para Administrador comum"
                                     >
                                       Tornar Admin
@@ -455,7 +455,7 @@ export const AdminDashboardPage: React.FC = () => {
                                     <button
                                       disabled={updatingUserId === u.id}
                                       onClick={() => handleRoleChange(u.id, 'PARTICIPANT', u.name)}
-                                      className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition border border-slate-300 flex items-center space-x-1 disabled:opacity-50"
+                                      className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white/10 text-white/70 hover:bg-white/20 transition border border-white/20 flex items-center space-x-1 disabled:opacity-50"
                                       title="Rebaixar para Participante"
                                     >
                                       <UserX className="w-3 h-3 mr-1" />
@@ -478,7 +478,7 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px]">
+                  <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
                     <th className="pb-3">Grupo</th>
                     <th className="pb-3">Status</th>
                     <th className="pb-3">Membros</th>
@@ -486,18 +486,18 @@ export const AdminDashboardPage: React.FC = () => {
                     <th className="pb-3">Convites Emitidos</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-white/10">
                   {reports?.participantsByGroup?.map((g: any) => (
-                    <tr key={g.id} className="hover:bg-slate-50">
-                      <td className="py-3 font-semibold text-slate-800">{g.name}</td>
+                    <tr key={g.id} className="hover:bg-white/5 transition">
+                      <td className="py-3 font-semibold text-white">{g.name}</td>
                       <td className="py-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-white/80 border border-white/15">
                           {g.status}
                         </span>
                       </td>
-                      <td className="py-3">{g._count?.members || 0}</td>
-                      <td className="py-3">{g._count?.raffles || 0}</td>
-                      <td className="py-3">{g._count?.invitations || 0}</td>
+                      <td className="py-3 text-white/70">{g._count?.members || 0}</td>
+                      <td className="py-3 text-white/70">{g._count?.raffles || 0}</td>
+                      <td className="py-3 text-white/70">{g._count?.invitations || 0}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -509,7 +509,7 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px]">
+                  <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
                     <th className="pb-3">Sorteio</th>
                     <th className="pb-3">Status</th>
                     <th className="pb-3">Data Prevista</th>
@@ -517,18 +517,18 @@ export const AdminDashboardPage: React.FC = () => {
                     <th className="pb-3">Ganhadores</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-white/10">
                   {reports?.participantsByRaffle?.map((r: any) => (
-                    <tr key={r.id} className="hover:bg-slate-50">
-                      <td className="py-3 font-semibold text-slate-800">{r.title}</td>
+                    <tr key={r.id} className="hover:bg-white/5 transition">
+                      <td className="py-3 font-semibold text-white">{r.title}</td>
                       <td className="py-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-white/80 border border-white/15">
                           {r.status}
                         </span>
                       </td>
-                      <td className="py-3">{new Date(r.drawDateTime).toLocaleDateString('pt-BR')}</td>
-                      <td className="py-3">{r._count?.participants || 0}</td>
-                      <td className="py-3">{r._count?.winners || 0}</td>
+                      <td className="py-3 text-white/70">{new Date(r.drawDateTime).toLocaleDateString('pt-BR')}</td>
+                      <td className="py-3 text-white/70">{r._count?.participants || 0}</td>
+                      <td className="py-3 text-white/70">{r._count?.winners || 0}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -540,7 +540,7 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px]">
+                  <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
                     <th className="pb-3">Sorteio</th>
                     <th className="pb-3">Prêmio</th>
                     <th className="pb-3">Ganhador</th>
@@ -548,15 +548,15 @@ export const AdminDashboardPage: React.FC = () => {
                     <th className="pb-3">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-white/10">
                   {reports?.winnersReport?.map((w: any) => (
-                    <tr key={w.id} className="hover:bg-slate-50">
-                      <td className="py-3 font-semibold text-slate-800">{w.raffle?.title}</td>
-                      <td className="py-3 text-indigo-700 font-medium">{w.raffle?.prize}</td>
-                      <td className="py-3">{w.user?.name}</td>
-                      <td className="py-3 font-mono text-slate-500">{w.user?.cpfMasked}</td>
+                    <tr key={w.id} className="hover:bg-white/5 transition">
+                      <td className="py-3 font-semibold text-white">{w.raffle?.title}</td>
+                      <td className="py-3 text-yellow-400 font-bold">{w.raffle?.prize}</td>
+                      <td className="py-3 text-white">{w.user?.name}</td>
+                      <td className="py-3 font-mono text-white/60">{w.user?.cpfMasked}</td>
                       <td className="py-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                           {w.status}
                         </span>
                       </td>
@@ -571,7 +571,7 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px]">
+                  <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
                     <th className="pb-3">Grupo</th>
                     <th className="pb-3">Tipo</th>
                     <th className="pb-3">Usos / Limite</th>
@@ -579,22 +579,22 @@ export const AdminDashboardPage: React.FC = () => {
                     <th className="pb-3">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-white/10">
                   {reports?.invitations?.map((inv: any) => (
-                    <tr key={inv.id} className="hover:bg-slate-50">
-                      <td className="py-3 font-semibold text-slate-800">{inv.group?.name}</td>
-                      <td className="py-3">{inv.type}</td>
-                      <td className="py-3">
+                    <tr key={inv.id} className="hover:bg-white/5 transition">
+                      <td className="py-3 font-semibold text-white">{inv.group?.name}</td>
+                      <td className="py-3 text-white/70">{inv.type}</td>
+                      <td className="py-3 text-white/70">
                         {inv.currentUses} / {inv.maxUses || 'Ilimitado'}
                       </td>
-                      <td className="py-3">
+                      <td className="py-3 text-white/70">
                         {inv.expiresAt ? new Date(inv.expiresAt).toLocaleDateString('pt-BR') : 'Sem expiração'}
                       </td>
                       <td className="py-3">
                         {inv.isRevoked ? (
-                          <span className="text-rose-600 font-semibold">Revogado</span>
+                          <span className="text-rose-400 font-bold">Revogado</span>
                         ) : (
-                          <span className="text-emerald-600 font-semibold">Ativo</span>
+                          <span className="text-emerald-400 font-bold">Ativo</span>
                         )}
                       </td>
                     </tr>
@@ -607,20 +607,20 @@ export const AdminDashboardPage: React.FC = () => {
           {activeReportTab === 'audit' && (
             <div className="space-y-3">
               {reports?.recentAudit?.map((log: any) => (
-                <div key={log.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex justify-between items-center">
+                <div key={log.id} className="p-3 bg-white/5 rounded-xl border border-white/10 text-xs flex justify-between items-center">
                   <div className="space-y-1">
-                    <div className="font-semibold text-slate-800 flex items-center space-x-2">
-                      <span className="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-[10px] font-bold">
+                    <div className="font-semibold text-white flex items-center space-x-2">
+                      <span className="px-2 py-0.5 rounded bg-yellow-400/20 text-yellow-300 text-[10px] font-bold border border-yellow-400/30">
                         {log.action}
                       </span>
                       <span>{log.entity} #{log.entityId}</span>
                     </div>
-                    <div className="text-[11px] text-slate-500 font-mono">
+                    <div className="text-[11px] text-white/60 font-mono">
                       {log.details || 'Sem detalhes adicionais'}
                     </div>
                   </div>
 
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-[11px] text-white/40">
                     {new Date(log.createdAt).toLocaleString('pt-BR')}
                   </div>
                 </div>
@@ -632,26 +632,26 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* Modal Criar Sorteio */}
       {showRaffleModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center pb-2 border-b">
-              <h2 className="text-lg font-bold text-slate-900">Criar Novo Sorteio</h2>
-              <button onClick={() => setShowRaffleModal(false)} className="text-slate-400 hover:text-slate-600">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900/95 backdrop-blur-2xl rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-white/15 space-y-4 max-h-[90vh] overflow-y-auto text-white">
+            <div className="flex justify-between items-center pb-2 border-b border-white/10">
+              <h2 className="text-lg font-bold text-white">Criar Novo Sorteio</h2>
+              <button onClick={() => setShowRaffleModal(false)} className="text-white/40 hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleCreateRaffleSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block font-medium text-slate-700 mb-1">Grupo Vinculado *</label>
+                <label className="block font-medium text-white/80 mb-1">Grupo Vinculado *</label>
                 <select
                   required
                   value={raffleForm.groupId}
                   onChange={(e) => setRaffleForm({ ...raffleForm, groupId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white"
+                  className="w-full px-3 py-2 border border-white/20 rounded-xl bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 >
                   {groups.map((g) => (
-                    <option key={g.id} value={g.id}>
+                    <option key={g.id} value={g.id} className="bg-slate-900 text-white">
                       {g.name}
                     </option>
                   ))}
@@ -660,110 +660,110 @@ export const AdminDashboardPage: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">Título do Sorteio *</label>
+                  <label className="block font-medium text-white/80 mb-1">Título do Sorteio *</label>
                   <input
                     type="text"
                     required
                     placeholder="Ex: Sorteio de Páscoa 2026"
                     value={raffleForm.title}
                     onChange={(e) => setRaffleForm({ ...raffleForm, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">Prêmio a ser Conquistado *</label>
+                  <label className="block font-medium text-white/80 mb-1">Prêmio a ser Conquistado *</label>
                   <input
                     type="text"
                     required
                     placeholder="Ex: iPhone 16 Pro 256GB"
                     value={raffleForm.prize}
                     onChange={(e) => setRaffleForm({ ...raffleForm, prize: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-medium text-slate-700 mb-1">Descrição Detalhada *</label>
+                <label className="block font-medium text-white/80 mb-1">Descrição Detalhada *</label>
                 <textarea
                   rows={2}
                   required
                   placeholder="Descreva a finalidade e detalhes do prêmio..."
                   value={raffleForm.description}
                   onChange={(e) => setRaffleForm({ ...raffleForm, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">Qtd. Ganhadores</label>
+                  <label className="block font-medium text-white/80 mb-1">Qtd. Ganhadores</label>
                   <input
                     type="number"
                     min="1"
                     max="100"
                     value={raffleForm.numberOfWinners}
                     onChange={(e) => setRaffleForm({ ...raffleForm, numberOfWinners: parseInt(e.target.value, 10) })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">Inscrições até</label>
+                  <label className="block font-medium text-white/80 mb-1">Inscrições até</label>
                   <input
                     type="datetime-local"
                     value={raffleForm.participationEndDate}
                     onChange={(e) => setRaffleForm({ ...raffleForm, participationEndDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-medium text-slate-700 mb-1">Data/Hora Sorteio</label>
+                  <label className="block font-medium text-white/80 mb-1">Data/Hora Sorteio</label>
                   <input
                     type="datetime-local"
                     value={raffleForm.drawDateTime}
                     onChange={(e) => setRaffleForm({ ...raffleForm, drawDateTime: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-medium text-slate-700 mb-1">Regulamento e Elegibilidade</label>
+                <label className="block font-medium text-white/80 mb-1">Regulamento e Elegibilidade</label>
                 <textarea
                   rows={2}
                   placeholder="Descreva os requisitos para entrega e condições legais..."
                   value={raffleForm.rules}
                   onChange={(e) => setRaffleForm({ ...raffleForm, rules: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 />
               </div>
 
               <div>
-                <label className="block font-medium text-slate-700 mb-1">Instruções Exclusivas para Ganhadores</label>
+                <label className="block font-medium text-white/80 mb-1">Instruções Exclusivas para Ganhadores</label>
                 <textarea
                   rows={2}
                   placeholder="Instruções privadas visíveis apenas para quem for sorteado (ex: chave de envio, local de retirada)..."
                   value={raffleForm.winnerInstructions}
                   onChange={(e) => setRaffleForm({ ...raffleForm, winnerInstructions: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 />
               </div>
 
-              <div className="flex justify-end space-x-2 pt-2 border-t">
+              <div className="flex justify-end space-x-2 pt-2 border-t border-white/10">
                 <button
                   type="button"
                   onClick={() => setShowRaffleModal(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg font-medium text-slate-700 hover:bg-slate-50"
+                  className="px-4 py-2 border border-white/20 rounded-xl font-medium text-white hover:bg-white/10 transition"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={createRaffleLoading}
-                  className="px-5 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50"
+                  className="px-5 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black rounded-xl transition shadow-lg shadow-yellow-400/20 disabled:opacity-50"
                 >
                   {createRaffleLoading ? 'Salvando...' : 'Salvar Sorteio'}
                 </button>

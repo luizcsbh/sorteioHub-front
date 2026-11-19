@@ -33,31 +33,31 @@ export const RafflesPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center space-x-2">
-            <Gift className="w-7 h-7 text-indigo-600" />
+          <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center space-x-2">
+            <Gift className="w-8 h-8 text-yellow-400" />
             <span>Sorteios Autorizados</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-white/60 mt-1">
             Participe dos sorteios ativos vinculados aos seus grupos fechados
           </p>
         </div>
 
         <div className="relative max-w-xs w-full">
-          <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-3 text-white/40" />
           <input
             type="text"
             placeholder="Buscar por sorteio, prêmio ou grupo..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500"
+            className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-xl text-xs text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
           />
         </div>
       </div>
 
       {loading ? (
-        <div className="py-20 text-center text-slate-400">Carregando sorteios...</div>
+        <div className="py-20 text-center text-white/50 text-sm">Carregando sorteios...</div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-500 text-xs">
+        <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/15 p-12 text-center text-white/60 text-xs">
           Nenhum sorteio encontrado para a busca.
         </div>
       ) : (
@@ -67,17 +67,17 @@ export const RafflesPage: React.FC = () => {
             return (
               <div
                 key={raffle.id}
-                className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm hover:border-indigo-200 transition flex flex-col justify-between space-y-4"
+                className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/15 p-6 hover:border-yellow-400/40 transition flex flex-col justify-between space-y-4 shadow-xl text-white"
               >
                 <div className="space-y-3">
                   <div className="flex justify-between items-start">
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                         raffle.status === 'PUBLISHED'
-                          ? 'bg-emerald-50 text-emerald-700'
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                           : raffle.status === 'DRAWN'
-                          ? 'bg-indigo-50 text-indigo-700'
-                          : 'bg-slate-100 text-slate-700'
+                          ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                          : 'bg-white/10 text-white/70 border border-white/15'
                       }`}
                     >
                       {raffle.status === 'PUBLISHED'
@@ -86,29 +86,29 @@ export const RafflesPage: React.FC = () => {
                         ? 'Sorteado'
                         : raffle.status}
                     </span>
-                    <span className="text-xs text-slate-400">Grupo: {raffle.group?.name}</span>
+                    <span className="text-xs text-white/50">Grupo: {raffle.group?.name}</span>
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">{raffle.title}</h3>
-                    <p className="text-xs text-slate-600 line-clamp-2 mt-1">{raffle.description}</p>
+                    <h3 className="text-lg font-black text-white">{raffle.title}</h3>
+                    <p className="text-xs text-white/70 line-clamp-2 mt-1">{raffle.description}</p>
                   </div>
 
-                  <div className="p-3 bg-indigo-50/50 rounded-xl flex items-center justify-between">
-                    <span className="text-xs font-medium text-slate-600">Prêmio:</span>
-                    <span className="text-sm font-bold text-indigo-700">{raffle.prize}</span>
+                  <div className="p-3 bg-yellow-400/10 border border-yellow-400/20 rounded-xl flex items-center justify-between">
+                    <span className="text-xs font-semibold text-white/70">Prêmio:</span>
+                    <span className="text-sm font-black text-yellow-300">{raffle.prize}</span>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <div className="text-slate-500 flex items-center space-x-1">
-                    <Clock className="w-3.5 h-3.5" />
+                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                  <div className="text-white/50 flex items-center space-x-1">
+                    <Clock className="w-3.5 h-3.5 text-yellow-400" />
                     <span>{new Date(raffle.drawDateTime).toLocaleDateString('pt-BR')}</span>
                   </div>
 
                   <div className="flex items-center space-x-2">
                     {hasParticipated && (
-                      <span className="text-[11px] font-semibold text-emerald-600 flex items-center space-x-0.5">
+                      <span className="text-[11px] font-bold text-emerald-400 flex items-center space-x-0.5">
                         <CheckCircle className="w-3.5 h-3.5" />
                         <span>Inscrito</span>
                       </span>
@@ -116,7 +116,7 @@ export const RafflesPage: React.FC = () => {
 
                     <Link
                       to={raffle.status === 'DRAWN' ? `/raffles/${raffle.id}/results` : `/raffles/${raffle.id}`}
-                      className="inline-flex items-center text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                      className="inline-flex items-center text-xs font-bold text-yellow-400 hover:text-yellow-300 hover:underline"
                     >
                       <span>{raffle.status === 'DRAWN' ? 'Resultado' : 'Ver Detalhes'}</span>
                       <ArrowRight className="w-3.5 h-3.5 ml-1" />

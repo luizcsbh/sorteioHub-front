@@ -86,14 +86,14 @@ export const CompleteProfilePage: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 sm:px-6">
-      <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+      <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/15 overflow-hidden text-white">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-700 to-violet-700 px-8 py-6 text-white">
+        <div className="bg-gradient-to-r from-slate-900/80 via-indigo-950/80 to-purple-950/80 border-b border-white/10 px-8 py-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
-            <UserCheck className="w-8 h-8 text-indigo-200" />
-            <h1 className="text-2xl font-bold">Conclua seu Cadastro Único</h1>
+            <UserCheck className="w-8 h-8 text-yellow-400" />
+            <h1 className="text-2xl font-bold text-white">Conclua seu Cadastro Único</h1>
           </div>
-          <p className="text-indigo-100 text-sm">
+          <p className="text-white/70 text-sm">
             Para garantir a integridade dos sorteios e a entrega de prêmios, informe seu CPF e endereço.
             Você fará isso apenas uma vez e poderá participar de todos os seus grupos autorizados.
           </p>
@@ -101,43 +101,43 @@ export const CompleteProfilePage: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
           {error && (
-            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start space-x-3 text-rose-800 text-sm">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-500 mt-0.5" />
+            <div className="p-4 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-start space-x-3 text-rose-300 text-sm">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-400 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Dados Pessoais */}
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center space-x-2 border-b pb-2">
-              <ShieldCheck className="w-5 h-5 text-indigo-600" />
+            <h2 className="text-lg font-bold text-white flex items-center space-x-2 border-b border-white/10 pb-2">
+              <ShieldCheck className="w-5 h-5 text-yellow-400" />
               <span>Dados Pessoais & Validação de CPF</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Nome Completo</label>
+                <label className="block text-xs font-semibold text-white/80 mb-1">Nome Completo</label>
                 <input
                   type="text"
                   disabled
                   value={user?.name || ''}
-                  className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-600 text-sm"
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white/50 text-sm cursor-not-allowed"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">E-mail Google</label>
+                <label className="block text-xs font-semibold text-white/80 mb-1">E-mail Google</label>
                 <input
                   type="email"
                   disabled
                   value={user?.email || ''}
-                  className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-600 text-sm"
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-white/50 text-sm cursor-not-allowed"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  CPF <span className="text-rose-500">*</span>
+                <label className="block text-xs font-semibold text-white/80 mb-1">
+                  CPF <span className="text-rose-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -146,16 +146,16 @@ export const CompleteProfilePage: React.FC = () => {
                   placeholder="000.000.000-00"
                   value={form.cpf}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:ring-2 focus:ring-yellow-400 focus:outline-none text-sm"
                 />
-                <p className="text-[11px] text-slate-500 mt-1">
+                <p className="text-[11px] text-white/50 mt-1">
                   O CPF é criptografado e validado por algoritmo oficial.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Telefone com DDD <span className="text-rose-500">*</span>
+                <label className="block text-xs font-semibold text-white/80 mb-1">
+                  Telefone com DDD <span className="text-rose-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -164,7 +164,7 @@ export const CompleteProfilePage: React.FC = () => {
                   placeholder="(11) 99999-9999"
                   value={form.phone}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:ring-2 focus:ring-yellow-400 focus:outline-none text-sm"
                 />
               </div>
             </div>
@@ -172,15 +172,15 @@ export const CompleteProfilePage: React.FC = () => {
 
           {/* Endereço */}
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center space-x-2 border-b pb-2">
-              <MapPin className="w-5 h-5 text-indigo-600" />
+            <h2 className="text-lg font-bold text-white flex items-center space-x-2 border-b border-white/10 pb-2">
+              <MapPin className="w-5 h-5 text-yellow-400" />
               <span>Endereço</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  CEP <span className="text-rose-500">*</span>
+                <label className="block text-xs font-semibold text-white/80 mb-1">
+                  CEP <span className="text-rose-400">*</span>
                 </label>
                 <div className="flex space-x-2">
                   <input
@@ -191,12 +191,12 @@ export const CompleteProfilePage: React.FC = () => {
                     value={form.cep}
                     onChange={handleChange}
                     onBlur={handleCepLookup}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:ring-2 focus:ring-yellow-400 focus:outline-none text-sm"
                   />
                   <button
                     type="button"
                     onClick={handleCepLookup}
-                    className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition"
+                    className="px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl text-xs font-semibold transition"
                   >
                     Buscar
                   </button>
@@ -204,8 +204,8 @@ export const CompleteProfilePage: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Logradouro <span className="text-rose-500">*</span>
+                <label className="block text-xs font-semibold text-white/80 mb-1">
+                  Logradouro <span className="text-rose-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -214,13 +214,13 @@ export const CompleteProfilePage: React.FC = () => {
                   placeholder="Rua, Avenida, Praça..."
                   value={form.logradouro}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:ring-2 focus:ring-yellow-400 focus:outline-none text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Número <span className="text-rose-500">*</span>
+                <label className="block text-xs font-semibold text-white/80 mb-1">
+                  Número <span className="text-rose-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -229,25 +229,25 @@ export const CompleteProfilePage: React.FC = () => {
                   placeholder="123"
                   value={form.numero}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:ring-2 focus:ring-yellow-400 focus:outline-none text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Complemento</label>
+                <label className="block text-xs font-semibold text-white/80 mb-1">Complemento</label>
                 <input
                   type="text"
                   name="complemento"
                   placeholder="Apto 42, Bloco B"
                   value={form.complemento}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:ring-2 focus:ring-yellow-400 focus:outline-none text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Bairro <span className="text-rose-500">*</span>
+                <label className="block text-xs font-semibold text-white/80 mb-1">
+                  Bairro <span className="text-rose-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -256,13 +256,13 @@ export const CompleteProfilePage: React.FC = () => {
                   placeholder="Centro"
                   value={form.bairro}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:ring-2 focus:ring-yellow-400 focus:outline-none text-sm"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Cidade <span className="text-rose-500">*</span>
+                <label className="block text-xs font-semibold text-white/80 mb-1">
+                  Cidade <span className="text-rose-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -271,22 +271,22 @@ export const CompleteProfilePage: React.FC = () => {
                   placeholder="São Paulo"
                   value={form.cidade}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:ring-2 focus:ring-yellow-400 focus:outline-none text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Estado (UF) <span className="text-rose-500">*</span>
+                <label className="block text-xs font-semibold text-white/80 mb-1">
+                  Estado (UF) <span className="text-rose-400">*</span>
                 </label>
                 <select
                   name="estado"
                   value={form.estado}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm bg-white"
+                  className="w-full px-3 py-2 border border-white/20 rounded-xl text-sm bg-slate-900 text-white focus:ring-2 focus:ring-yellow-400 focus:outline-none"
                 >
                   {['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'].map((uf) => (
-                    <option key={uf} value={uf}>{uf}</option>
+                    <option key={uf} value={uf} className="bg-slate-900 text-white">{uf}</option>
                   ))}
                 </select>
               </div>
@@ -294,34 +294,34 @@ export const CompleteProfilePage: React.FC = () => {
           </div>
 
           {/* Consentimento LGPD */}
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">
+          <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-yellow-400">
               Conformidade e Proteção de Dados (LGPD)
             </h3>
 
-            <label className="flex items-start space-x-3 text-xs text-slate-700 cursor-pointer">
+            <label className="flex items-start space-x-3 text-xs text-white/80 cursor-pointer">
               <input
                 type="checkbox"
                 name="acceptTerms"
                 checked={form.acceptTerms}
                 onChange={handleChange}
-                className="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="mt-0.5 rounded border-white/20 text-yellow-400 focus:ring-yellow-400 bg-white/10"
               />
               <span>
-                Declaro que li e concordo com os <strong>Termos de Uso</strong> da plataforma, reconhecendo que a participação em sorteios requer cumprimento das regras específicas de cada grupo.
+                Declaro que li e concordo com os <strong className="text-white">Termos de Uso</strong> da plataforma, reconhecendo que a participação em sorteios requer cumprimento das regras específicas de cada grupo.
               </span>
             </label>
 
-            <label className="flex items-start space-x-3 text-xs text-slate-700 cursor-pointer">
+            <label className="flex items-start space-x-3 text-xs text-white/80 cursor-pointer">
               <input
                 type="checkbox"
                 name="acceptPrivacyPolicy"
                 checked={form.acceptPrivacyPolicy}
                 onChange={handleChange}
-                className="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="mt-0.5 rounded border-white/20 text-yellow-400 focus:ring-yellow-400 bg-white/10"
               />
               <span>
-                Concordo com a <strong>Política de Privacidade</strong> e autorizo a coleta do meu CPF e endereço para finalidade estrita de validação de elegibilidade e entrega de prêmios.
+                Concordo com a <strong className="text-white">Política de Privacidade</strong> e autorizo a coleta do meu CPF e endereço para finalidade estrita de validação de elegibilidade e entrega de prêmios.
               </span>
             </label>
           </div>
@@ -330,7 +330,7 @@ export const CompleteProfilePage: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-100 transition disabled:opacity-50"
+              className="inline-flex items-center px-6 py-3 text-sm font-black rounded-xl text-slate-950 bg-yellow-400 hover:bg-yellow-300 shadow-lg shadow-yellow-400/20 transition disabled:opacity-50"
             >
               <CheckCircle className="w-5 h-5 mr-2" />
               {isSubmitting ? 'Salvando...' : 'Concluir Cadastro e Prosseguir'}
