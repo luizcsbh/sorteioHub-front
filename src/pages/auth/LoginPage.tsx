@@ -123,6 +123,7 @@ export const LoginPage: React.FC = () => {
     try {
       window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
+        use_fedcm_for_prompt: true,
         callback: async (response: { credential: string }) => {
           setGoogleLoading(true);
           try {
@@ -146,17 +147,8 @@ export const LoginPage: React.FC = () => {
     if (window.google?.accounts?.id && hasRealGoogle) {
       try {
         initGoogleAuth();
-        window.google.accounts.id.prompt((notification) => {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            setGoogleLoading(false);
-            const reason = notification.getNotDisplayedReason?.() || notification.getSkippedReason?.() || '';
-            if (reason.toLowerCase().includes('origin') || reason.toLowerCase().includes('suppressed')) {
-              toast.warning(
-                'Origem localhost não autorizada no Google Cloud Console. Use o login por e-mail ou os atalhos de desenvolvedor abaixo.'
-              );
-            }
-          }
-        });
+        window.google.accounts.id.prompt();
+        setTimeout(() => setGoogleLoading(false), 2500);
         return;
       } catch {
         setGoogleLoading(false);

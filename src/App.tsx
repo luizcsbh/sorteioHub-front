@@ -6,6 +6,7 @@ import { Navbar } from './components/Navbar';
 import { CookieConsent } from './components/CookieConsent';
 import { LoginPage } from './pages/auth/LoginPage';
 import { CompleteProfilePage } from './pages/auth/CompleteProfilePage';
+import { ProfilePage } from './pages/profile/ProfilePage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
 import { GroupsPage } from './pages/groups/GroupsPage';
 import { GroupDetailsPage } from './pages/groups/GroupDetailsPage';
@@ -84,6 +85,14 @@ const AppContent: React.FC = () => {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />

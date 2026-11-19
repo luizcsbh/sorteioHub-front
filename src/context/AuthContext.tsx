@@ -21,6 +21,7 @@ export interface User {
   phone?: string | null;
   cpfMasked?: string | null;
   isCpfValidated: boolean;
+  hasPassword?: boolean;
   address?: Address | null;
 }
 
@@ -34,6 +35,8 @@ interface AuthContextType {
   loginWithEmail: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, confirmPassword?: string) => Promise<void>;
   completeProfile: (data: any) => Promise<void>;
+  updateProfile: (data: any) => Promise<void>;
+  changePassword: (data: { currentPassword?: string; newPassword: string; confirmPassword?: string }) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -137,6 +140,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateProfile = async (data: any) => {
+    setIsLoading(true);
+    try {
+      const res = await api.put('/auth/profile', data);
+      setUser(res.data);
+      localStorage.setItem('sorteiohub_user', JSON.stringify(res.data));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const changePassword = async (data: { currentPassword?: string; newPassword: string; confirmPassword?: string }) => {
+    setIsLoading(true);
+    try {
+      await api.put('/auth/change-password', data);
+      if (user) {
+        const updated = { ...user, hasPassword: true };
+        setUser(updated);
+        localStorage.setItem('sorteiohub_user', JSON.stringify(updated));
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('sorteiohub_token');
     localStorage.removeItem('sorteiohub_user');
@@ -168,6 +196,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loginWithEmail,
         register,
         completeProfile,
+        updateProfile,
+        changePassword,
         logout,
         refreshUser,
       }}

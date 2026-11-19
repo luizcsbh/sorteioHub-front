@@ -65,6 +65,16 @@ export const Navbar: React.FC = () => {
                   </span>
                 </Link>
 
+                <Link
+                  to="/profile"
+                  className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50 transition"
+                >
+                  <span className="flex items-center space-x-1.5">
+                    <UserIcon className="w-4 h-4" />
+                    <span>Meu Perfil</span>
+                  </span>
+                </Link>
+
                 {(user?.role === 'ADMINISTRATOR' || user?.role === 'SUPER_ADMIN') && (
                   <>
                     <Link
@@ -95,35 +105,43 @@ export const Navbar: React.FC = () => {
           {/* User profile / Actions */}
           <div className="flex items-center space-x-4">
             {isAuthenticated && user ? (
-              <div className="flex items-center space-x-4">
-                <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-sm font-semibold text-slate-800">{user.name}</span>
-                  <div className="flex items-center justify-end space-x-1 text-xs text-slate-500">
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                      {roleLabel[user.role]}
+              <div className="flex items-center space-x-3">
+                <Link
+                  to="/profile"
+                  className="flex items-center space-x-3 p-1.5 rounded-xl hover:bg-slate-100 transition group cursor-pointer"
+                  title="Acessar meu perfil e configurações"
+                >
+                  <div className="hidden sm:flex flex-col text-right">
+                    <span className="text-sm font-semibold text-slate-800 group-hover:text-indigo-600 transition">
+                      {user.name}
                     </span>
-                    {user.cpfMasked && (
-                      <span className="text-[11px] text-slate-400">CPF: {user.cpfMasked}</span>
-                    )}
+                    <div className="flex items-center justify-end space-x-1 text-xs text-slate-500">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                        {roleLabel[user.role]}
+                      </span>
+                      {user.cpfMasked && (
+                        <span className="text-[11px] text-slate-400">CPF: {user.cpfMasked}</span>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {user.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={user.name}
-                    className="w-9 h-9 rounded-full ring-2 ring-indigo-500/20 object-cover"
-                  />
-                ) : (
-                  <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
+                  {user.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.name}
+                      className="w-9 h-9 rounded-full ring-2 ring-indigo-500/20 object-cover"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </Link>
 
                 <button
                   onClick={handleLogout}
                   title="Sair da conta"
-                  className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                  className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
                 >
                   <LogOut className="w-5 h-5" />
                 </button>
