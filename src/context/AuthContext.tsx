@@ -32,7 +32,7 @@ interface AuthContextType {
   needsProfileCompletion: boolean;
   loginWithGoogle: (credential?: string, mockProfile?: any) => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, confirmPassword?: string) => Promise<void>;
   completeProfile: (data: any) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -100,10 +100,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (name: string, email: string, password: string, confirmPassword?: string) => {
     setIsLoading(true);
     try {
-      const res = await api.post('/auth/register', { name, email, password });
+      const res = await api.post('/auth/register', {
+        name,
+        email,
+        password,
+        confirmPassword: confirmPassword || password,
+      });
       const { token: newToken, user: newUser, needsProfileCompletion: needsCompletion } = res.data;
 
       localStorage.setItem('sorteiohub_token', newToken);

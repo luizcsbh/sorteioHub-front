@@ -216,9 +216,11 @@ export const LoginPage: React.FC = () => {
     }
     setRegLoading(true);
     try {
-      await register(regName, regEmail, regPassword);
+      await register(regName, regEmail, regPassword, regConfirm);
+      toast.success('Conta criada com sucesso!');
     } catch (err: any) {
-      toast.error(err.response?.data?.error || err.message || 'Erro ao criar conta.');
+      const detailsMsg = err.response?.data?.details?.[0]?.message;
+      toast.error(detailsMsg || err.response?.data?.error || err.message || 'Erro ao criar conta.');
     } finally {
       setRegLoading(false);
     }
