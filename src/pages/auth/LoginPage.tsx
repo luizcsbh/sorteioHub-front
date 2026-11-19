@@ -107,44 +107,62 @@ export const LoginPage: React.FC = () => {
   // Google SDK init
   useEffect(() => {
     if (!hasRealGoogle) return;
-    const scriptId = 'google-identity-sdk';
-    if (!document.getElementById(scriptId)) {
-      const script = document.createElement('script');
-      script.id = scriptId;
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = () => initGoogle();
-      document.head.appendChild(script);
-    } else if (window.google) {
-      initGoogle();
-    }
+
+    const checkAndInit = () => {
+      if (window.google?.accounts?.id && googleBtnRef.current) {
+        initGoogle();
+        return true;
+      }
+      return false;
+    };
+
+    if (checkAndInit()) return;
+
+    const interval = setInterval(() => {
+      if (checkAndInit()) {
+        clearInterval(interval);
+      }
+    }, 150);
+
+    const timer = setTimeout(() => clearInterval(interval), 4000);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasRealGoogle]);
+  }, [hasRealGoogle, tab]);
 
   const initGoogle = () => {
-    if (!window.google || !googleBtnRef.current) return;
-    window.google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback: async (response: { credential: string }) => {
-        setGoogleLoading(true);
-        try {
-          await loginWithGoogle(response.credential);
-        } catch (err: any) {
-          toast.error(err.response?.data?.error || err.message || 'Erro ao entrar com Google.');
-        } finally {
-          setGoogleLoading(false);
-        }
-      },
-    });
-    window.google.accounts.id.renderButton(googleBtnRef.current, {
-      theme: 'filled_white',
-      size: 'large',
-      shape: 'rectangular',
-      width: googleBtnRef.current.offsetWidth || 340,
-      text: 'signin_with',
-      locale: 'pt-BR',
-    });
+    try {
+      if (!window.google?.accounts?.id || !googleBtnRef.current) return;
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: async (response: { credential: string }) => {
+          setGoogleLoading(true);
+          try {
+            await loginWithGoogle(response.credential);
+          } catch (err: any) {
+            toast.error(err.response?.data?.error || err.message || 'Erro ao entrar com Google.');
+          } finally {
+            setGoogleLoading(false);
+          }
+        },
+      });
+
+      const containerWidth = googleBtnRef.current.offsetWidth || 340;
+      const safeWidth = Math.min(Math.max(containerWidth, 200), 400);
+
+      window.google.accounts.id.renderButton(googleBtnRef.current, {
+        theme: 'outline',
+        size: 'large',
+        shape: 'rectangular',
+        width: safeWidth,
+        text: 'signin_with',
+        locale: 'pt-BR',
+      });
+    } catch (e) {
+      console.warn('[SorteioHub] Google SDK init:', e);
+    }
   };
 
   const handleMockLogin = async (email: string, name: string) => {
@@ -298,10 +316,12 @@ export const LoginPage: React.FC = () => {
             {/* Google button */}
             <div className="mb-5">
               {hasRealGoogle ? (
-                <div
-                  ref={googleBtnRef}
-                  className="w-full flex justify-center min-h-[44px]"
-                />
+                <div className="w-full flex justify-center bg-white rounded-xl p-1 shadow-sm">
+                  <div
+                    ref={googleBtnRef}
+                    className="w-full flex justify-center min-h-[44px]"
+                  />
+                </div>
               ) : (
                 <button
                   onClick={() => handleMockLogin('admin@sorteiohub.com.br', 'Administrador Geral')}
