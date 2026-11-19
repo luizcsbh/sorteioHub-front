@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { Navbar } from './components/Navbar';
+import { CookieConsent } from './components/CookieConsent';
 import { LoginPage } from './pages/auth/LoginPage';
 import { CompleteProfilePage } from './pages/auth/CompleteProfilePage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
@@ -173,6 +174,9 @@ const AppContent: React.FC = () => {
           </div>
         </footer>
       )}
+
+      {/* Banner de Consentimento de Cookies & LGPD */}
+      <CookieConsent />
     </div>
   );
 };

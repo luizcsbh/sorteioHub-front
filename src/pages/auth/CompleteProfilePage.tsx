@@ -174,7 +174,7 @@ export const CompleteProfilePage: React.FC = () => {
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-slate-900 flex items-center space-x-2 border-b pb-2">
               <MapPin className="w-5 h-5 text-indigo-600" />
-              <span>Endereço de Entrega de Prêmios</span>
+              <span>Endereço</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
