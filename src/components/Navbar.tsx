@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Gift, Users, Shield, LogOut, User as UserIcon, LayoutDashboard, Send } from 'lucide-react';
+import { Gift, Users, Shield, LogOut, User as UserIcon, LayoutDashboard, Send, KeyRound } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -62,6 +62,17 @@ export const Navbar: React.FC = () => {
                   <span className="flex items-center space-x-1.5">
                     <Gift className="w-4 h-4" />
                     <span>Sorteios</span>
+                  </span>
+                </Link>
+
+                <Link
+                  to="/participar"
+                  className="px-3 py-2 rounded-lg text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition"
+                  title="Entrar em um sorteio informando o PIN ou link"
+                >
+                  <span className="flex items-center space-x-1.5">
+                    <KeyRound className="w-4 h-4 text-amber-600" />
+                    <span>Entrar com PIN</span>
                   </span>
                 </Link>
 
@@ -147,13 +158,31 @@ export const Navbar: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition"
-              >
-                <UserIcon className="w-4 h-4 mr-2" />
-                Entrar com Google
-              </Link>
+              <div className="flex items-center space-x-2">
+                <Link
+                  to="/participar"
+                  className="inline-flex items-center px-3.5 py-2 text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-xl transition shadow-xs"
+                >
+                  <KeyRound className="w-3.5 h-3.5 mr-1.5 text-amber-700" />
+                  <span>Entrar com PIN</span>
+                </Link>
+
+                <Link
+                  to="/login?type=admin"
+                  className="hidden sm:inline-flex items-center px-3.5 py-2 text-xs font-bold text-slate-700 hover:text-indigo-600 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition"
+                >
+                  <Shield className="w-3.5 h-3.5 mr-1.5 text-indigo-600" />
+                  <span>Área do Administrador</span>
+                </Link>
+
+                <Link
+                  to="/login"
+                  className="inline-flex items-center px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition"
+                >
+                  <UserIcon className="w-3.5 h-3.5 mr-1.5" />
+                  <span>Entrar</span>
+                </Link>
+              </div>
             )}
           </div>
         </div>

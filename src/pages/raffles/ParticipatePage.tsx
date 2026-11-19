@@ -125,7 +125,7 @@ export const ParticipatePage: React.FC = () => {
     }
   };
 
-  // Cadastro rápido estilo Kahoot + Inscrição automática no sorteio
+  // Cadastro rápido + Inscrição automática no sorteio
   const handleQuickRegisterAndJoin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !password) {
@@ -197,13 +197,13 @@ export const ParticipatePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#210047] flex flex-col justify-between relative overflow-hidden text-white font-sans selection:bg-yellow-400 selection:text-purple-900">
-      {/* ── Elementos Visuais Kahoot (Triângulos, Diamantes, Círculos) ──────── */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex flex-col justify-between relative overflow-hidden text-white font-sans selection:bg-amber-400 selection:text-slate-950">
+      {/* ── Elementos Visuais Decorativos ──────── */}
       <div className="pointer-events-none absolute -top-20 -left-20 w-80 h-80 rounded-full bg-violet-600/30 blur-3xl animate-pulse" />
       <div className="pointer-events-none absolute top-1/3 -right-20 w-96 h-96 rounded-full bg-indigo-500/25 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-20 left-1/4 w-80 h-80 rounded-full bg-yellow-400/15 blur-3xl" />
 
-      {/* Formas Geométricas decorativas estilo Kahoot */}
+      {/* Formas Geométricas decorativas */}
       <div className="pointer-events-none absolute top-12 left-10 w-12 h-12 border-4 border-yellow-400/30 rotate-12 rounded-xl hidden sm:block" />
       <div className="pointer-events-none absolute top-28 right-16 w-8 h-8 bg-rose-500/30 rotate-45 hidden sm:block" />
       <div className="pointer-events-none absolute bottom-24 left-16 w-10 h-10 border-4 border-emerald-400/30 rounded-full hidden sm:block" />
@@ -213,7 +213,7 @@ export const ParticipatePage: React.FC = () => {
       <header className="px-6 py-6 flex items-center justify-between relative z-20 max-w-5xl mx-auto w-full">
         <Link to="/" className="flex items-center space-x-3 group">
           <div className="w-11 h-11 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/30 group-hover:scale-105 transition">
-            <Gift className="w-6 h-6 text-[#210047]" />
+            <Gift className="w-6 h-6 text-slate-950" />
           </div>
           <span className="text-2xl font-black tracking-tight text-white">SorteioHub</span>
         </Link>
@@ -241,10 +241,10 @@ export const ParticipatePage: React.FC = () => {
 
       {/* ── Conteúdo Central ────────────────────────────────────────────────── */}
       <main className="flex-1 flex items-center justify-center p-4 relative z-20 max-w-xl mx-auto w-full">
-        {/* CASO 1: Nenhum PIN selecionado ainda (Tela Estilo kahoot.it) */}
+        {/* CASO 1: Nenhum PIN selecionado ainda */}
         {!raffle && !loading && (
           <div className="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-black/40 text-center space-y-6">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-yellow-400 to-amber-300 text-[#210047] mx-auto flex items-center justify-center shadow-xl shadow-yellow-400/20 transform hover:rotate-6 transition">
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-yellow-400 to-amber-300 text-slate-950 mx-auto flex items-center justify-center shadow-xl shadow-yellow-400/20 transform hover:rotate-6 transition">
               <KeyRound className="w-10 h-10" />
             </div>
 
@@ -274,7 +274,7 @@ export const ParticipatePage: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-4 px-6 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-lg shadow-xl shadow-yellow-400/25 hover:shadow-yellow-400/40 hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer flex items-center justify-center space-x-2"
+                className="w-full py-4 px-6 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-lg shadow-xl shadow-yellow-400/25 hover:shadow-yellow-400/40 hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer flex items-center justify-center space-x-2"
               >
                 <span>ENTRAR NO SORTEIO</span>
                 <ArrowRight className="w-5 h-5" />
@@ -302,7 +302,7 @@ export const ParticipatePage: React.FC = () => {
         {loading && (
           <div className="text-center py-20 space-y-4">
             <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto" />
-            <div className="text-white font-bold text-lg">Carregando sorteio estilo Kahoot...</div>
+            <div className="text-white font-bold text-lg">Carregando dados do sorteio...</div>
           </div>
         )}
 
@@ -317,7 +317,7 @@ export const ParticipatePage: React.FC = () => {
                   <span className="text-[11px] font-bold uppercase tracking-wider text-white/50">
                     PIN DO SORTEIO:
                   </span>
-                  <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-yellow-400 text-[#210047] shadow-sm">
+                  <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-yellow-400 text-slate-950 shadow-sm">
                     {raffle.id.slice(0, 8).toUpperCase()}
                   </span>
                 </div>
@@ -342,9 +342,9 @@ export const ParticipatePage: React.FC = () => {
               </div>
 
               {/* Banner Dourado do Prêmio */}
-              <div className="my-5 p-5 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-300 text-[#210047] text-center shadow-lg transform hover:scale-[1.01] transition">
-                <div className="text-[11px] font-black uppercase tracking-widest text-[#210047]/70 flex items-center justify-center space-x-1.5">
-                  <Trophy className="w-4 h-4 text-[#210047]" />
+              <div className="my-5 p-5 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 text-center shadow-lg transform hover:scale-[1.01] transition">
+                <div className="text-[11px] font-black uppercase tracking-widest text-slate-950/70 flex items-center justify-center space-x-1.5">
+                  <Trophy className="w-4 h-4 text-slate-950" />
                   <span>Prêmio do Ganhador</span>
                 </div>
                 <div className="text-2xl sm:text-3xl font-black mt-1 tracking-tight">
@@ -414,7 +414,7 @@ export const ParticipatePage: React.FC = () => {
 
                     <Link
                       to="/raffles"
-                      className="flex-1 py-3 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-xs transition flex items-center justify-center space-x-1.5"
+                      className="flex-1 py-3 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-xs transition flex items-center justify-center space-x-1.5"
                     >
                       <span>Ver Meus Bilhetes</span>
                       <ArrowRight className="w-4 h-4" />
@@ -451,20 +451,20 @@ export const ParticipatePage: React.FC = () => {
                   <button
                     onClick={() => handleParticipate()}
                     disabled={participateLoading}
-                    className="w-full py-4 px-6 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-base shadow-xl shadow-yellow-400/25 hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50"
+                    className="w-full py-4 px-6 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-base shadow-xl shadow-yellow-400/25 hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50"
                   >
                     {participateLoading ? (
                       <span className="animate-pulse">Confirmando Participação...</span>
                     ) : (
                       <>
-                        <Sparkles className="w-5 h-5 text-[#210047]" />
+                        <Sparkles className="w-5 h-5 text-slate-950" />
                         <span>ENTRAR NO SORTEIO AGORA 🎯</span>
                       </>
                     )}
                   </button>
                 </div>
               ) : (
-                /* USUÁRIO NÃO LOGADO: CADASTRO OU LOGIN RÁPIDO ESTILO KAHOOT */
+                /* USUÁRIO NÃO LOGADO: CADASTRO OU LOGIN RÁPIDO */
                 <div className="mt-6 pt-6 border-t border-white/10 space-y-4">
                   {/* Seletor de Modo: Cadastro Rápido vs Já tenho Conta */}
                   <div className="flex bg-black/20 p-1 rounded-xl border border-white/10">
@@ -473,7 +473,7 @@ export const ParticipatePage: React.FC = () => {
                       onClick={() => setAuthMode('register')}
                       className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${
                         authMode === 'register'
-                          ? 'bg-yellow-400 text-[#210047] shadow'
+                          ? 'bg-yellow-400 text-slate-950 shadow'
                           : 'text-white/60 hover:text-white'
                       }`}
                     >
@@ -484,7 +484,7 @@ export const ParticipatePage: React.FC = () => {
                       onClick={() => setAuthMode('login')}
                       className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${
                         authMode === 'login'
-                          ? 'bg-yellow-400 text-[#210047] shadow'
+                          ? 'bg-yellow-400 text-slate-950 shadow'
                           : 'text-white/60 hover:text-white'
                       }`}
                     >
@@ -537,13 +537,13 @@ export const ParticipatePage: React.FC = () => {
                       <button
                         type="submit"
                         disabled={participateLoading}
-                        className="w-full py-4 px-6 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-base shadow-xl shadow-yellow-400/25 hover:scale-[1.01] active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50 mt-2"
+                        className="w-full py-4 px-6 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-base shadow-xl shadow-yellow-400/25 hover:scale-[1.01] active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50 mt-2"
                       >
                         {participateLoading ? (
                           <span className="animate-pulse">Criando conta e bilhete...</span>
                         ) : (
                           <>
-                            <Sparkles className="w-5 h-5 text-[#210047]" />
+                            <Sparkles className="w-5 h-5 text-slate-950" />
                             <span>CADASTRAR E GARANTIR MEU BILHETE 🚀</span>
                           </>
                         )}
@@ -576,13 +576,13 @@ export const ParticipatePage: React.FC = () => {
                       <button
                         type="submit"
                         disabled={participateLoading}
-                        className="w-full py-4 px-6 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-base shadow-xl shadow-yellow-400/25 hover:scale-[1.01] active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50 mt-2"
+                        className="w-full py-4 px-6 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-base shadow-xl shadow-yellow-400/25 hover:scale-[1.01] active:scale-[0.99] transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-50 mt-2"
                       >
                         {participateLoading ? (
                           <span className="animate-pulse">Entrando no sorteio...</span>
                         ) : (
                           <>
-                            <ArrowRight className="w-5 h-5 text-[#210047]" />
+                            <ArrowRight className="w-5 h-5 text-slate-950" />
                             <span>ENTRAR E PARTICIPAR 🎯</span>
                           </>
                         )}
@@ -619,7 +619,7 @@ export const ParticipatePage: React.FC = () => {
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
       <footer className="px-6 py-6 text-center text-xs text-white/30 relative z-20">
-        © 2026 SorteioHub · Plataforma Segura de Sorteios estilo Kahoot
+        © 2026 SorteioHub · Plataforma Segura e Oficial de Sorteios
       </footer>
     </div>
   );

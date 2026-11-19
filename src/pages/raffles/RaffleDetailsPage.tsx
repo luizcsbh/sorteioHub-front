@@ -211,27 +211,27 @@ export const RaffleDetailsPage: React.FC = () => {
             {/* Botão Compartilhar PIN (sempre visível para gestor) */}
             <button
               onClick={() => setShowSharePanel((v) => !v)}
-              className="px-3.5 py-1.5 bg-yellow-400 hover:bg-yellow-300 text-[#210047] rounded-lg text-xs font-black transition flex items-center space-x-1.5 shadow-sm"
+              className="px-3.5 py-1.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 rounded-lg text-xs font-black transition flex items-center space-x-1.5 shadow-sm cursor-pointer"
             >
               <Share2 className="w-3.5 h-3.5" />
-              <span>PIN / Link Kahoot</span>
+              <span>Compartilhar PIN / Link</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Painel de compartilhamento de PIN estilo Kahoot */}
+      {/* Painel de compartilhamento de PIN */}
       {raffle && isManager && showSharePanel && (
-        <div className="bg-[#210047] text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-purple-800/50 space-y-5">
+        <div className="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-indigo-900/50 space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg">
-                <KeyRound className="w-5 h-5 text-[#210047]" />
+                <KeyRound className="w-5 h-5 text-slate-950" />
               </div>
               <div>
                 <h3 className="font-black text-white text-base">Compartilhar Acesso ao Sorteio</h3>
                 <p className="text-xs text-white/60">
-                  Envie o PIN ou link para os participantes entrarem — igual ao Kahoot!
+                  Envie o PIN ou link para os participantes entrarem no sorteio
                 </p>
               </div>
             </div>
@@ -274,7 +274,7 @@ export const RaffleDetailsPage: React.FC = () => {
               </div>
               <button
                 onClick={() => copyLink(raffle.id)}
-                className="w-full py-2 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-xs transition flex items-center justify-center space-x-1.5"
+                className="w-full py-2 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-xs transition flex items-center justify-center space-x-1.5"
               >
                 <Copy className="w-3.5 h-3.5" />
                 <span>Copiar Link Curto</span>

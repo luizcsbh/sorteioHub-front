@@ -254,7 +254,7 @@ export const LoginPage: React.FC = () => {
     'w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition text-sm';
 
   return (
-    <div className="min-h-screen bg-[#210047] flex overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex overflow-hidden relative">
       {/* ── Decorative blobs ───────────────────────────────────────────────── */}
       <div className="pointer-events-none absolute -top-32 -left-32 w-96 h-96 rounded-full bg-purple-600/30 blur-3xl" />
       <div className="pointer-events-none absolute top-1/2 -right-24 w-80 h-80 rounded-full bg-indigo-500/20 blur-3xl" />
@@ -265,7 +265,7 @@ export const LoginPage: React.FC = () => {
         {/* Logo */}
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/30">
-            <Gift className="w-7 h-7 text-[#210047]" />
+            <Gift className="w-7 h-7 text-slate-950" />
           </div>
           <span className="text-white text-2xl font-black tracking-tight">SorteioHub</span>
         </div>
@@ -321,7 +321,7 @@ export const LoginPage: React.FC = () => {
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center justify-center space-x-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center">
-              <Gift className="w-6 h-6 text-[#210047]" />
+              <Gift className="w-6 h-6 text-slate-950" />
             </div>
             <span className="text-white text-xl font-black">SorteioHub</span>
           </div>
@@ -336,7 +336,7 @@ export const LoginPage: React.FC = () => {
                 onClick={() => setAccountMode('participant')}
                 className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${
                   accountMode === 'participant'
-                    ? 'bg-yellow-400 text-[#210047] shadow-lg shadow-yellow-400/20'
+                    ? 'bg-yellow-400 text-slate-950 shadow-lg shadow-yellow-400/20'
                     : 'text-white/60 hover:text-white'
                 }`}
               >
@@ -434,7 +434,7 @@ export const LoginPage: React.FC = () => {
                   onClick={() => setTab(t)}
                   className={`flex-1 py-2 text-sm font-bold rounded-xl transition ${
                     tab === t
-                      ? 'bg-yellow-400 text-[#210047] shadow'
+                      ? 'bg-yellow-400 text-slate-950 shadow'
                       : 'text-white/50 hover:text-white'
                   }`}
                 >
@@ -474,7 +474,7 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loginLoading}
-                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-base rounded-xl shadow-lg shadow-yellow-400/25 transition disabled:opacity-60 flex items-center justify-center space-x-2"
+                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-base rounded-xl shadow-lg shadow-yellow-400/25 transition disabled:opacity-60 flex items-center justify-center space-x-2"
                 >
                   {loginLoading ? (
                     <><Loader2 className="w-5 h-5 animate-spin" /><span>Entrando…</span></>
@@ -553,7 +553,7 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={regLoading}
-                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-[#210047] font-black text-base rounded-xl shadow-lg shadow-yellow-400/25 transition disabled:opacity-60 flex items-center justify-center space-x-2 !mt-5 cursor-pointer"
+                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-base rounded-xl shadow-lg shadow-yellow-400/25 transition disabled:opacity-60 flex items-center justify-center space-x-2 !mt-5 cursor-pointer"
                 >
                   {regLoading ? (
                     <><Loader2 className="w-5 h-5 animate-spin" /><span>Criando…</span></>
@@ -568,7 +568,7 @@ export const LoginPage: React.FC = () => {
               </form>
             )}
 
-            {/* Banner de atalho estilo Kahoot ou alternância */}
+            {/* Banner de atalho para entrada por PIN */}
             {accountMode === 'participant' ? (
               <div className="mt-5 p-3.5 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 text-center space-y-1">
                 <div className="text-xs text-yellow-300 font-bold flex items-center justify-center space-x-1.5">
@@ -583,7 +583,7 @@ export const LoginPage: React.FC = () => {
                     to="/participar"
                     className="inline-flex items-center text-xs font-black text-yellow-400 hover:text-yellow-300 hover:underline pt-0.5"
                   >
-                    <span>Entrar no Sorteio com PIN (Estilo Kahoot) →</span>
+                    <span>Entrar no Sorteio com PIN →</span>
                   </Link>
                 </div>
               </div>
