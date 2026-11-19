@@ -18,6 +18,8 @@ import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { CampaignsPage } from './pages/admin/CampaignsPage';
 import { TermsAndPrivacyPage } from './pages/legal/TermsAndPrivacyPage';
 import { ParticipatePage } from './pages/raffles/ParticipatePage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({
   children,
@@ -55,6 +57,8 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const isAuthPage =
     location.pathname === '/login' ||
+    location.pathname === '/forgot-password' ||
+    location.pathname.startsWith('/reset-password') ||
     location.pathname.startsWith('/participar') ||
     location.pathname.startsWith('/s/');
 
@@ -71,6 +75,8 @@ const AppContent: React.FC = () => {
         <Routes>
           {/* Rotas Públicas */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           <Route path="/participar" element={<ParticipatePage />} />
           <Route path="/participar/:idOrPin" element={<ParticipatePage />} />
           <Route path="/s/:idOrPin" element={<ParticipatePage />} />

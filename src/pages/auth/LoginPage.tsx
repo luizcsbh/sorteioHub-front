@@ -466,10 +466,13 @@ export const LoginPage: React.FC = () => {
                   placeholder="Sua senha"
                   disabled={loginLoading}
                 />
-                <div className="flex justify-end -mt-1">
-                  <button type="button" className="text-xs text-yellow-400 hover:text-yellow-300 transition">
+                <div className="text-right -mt-2">
+                  <Link
+                    to="/forgot-password"
+                    className="text-xs text-white/50 hover:text-yellow-400 transition-colors"
+                  >
                     Esqueceu a senha?
-                  </button>
+                  </Link>
                 </div>
                 <button
                   type="submit"
