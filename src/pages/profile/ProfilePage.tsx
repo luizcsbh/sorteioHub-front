@@ -27,9 +27,7 @@ export const ProfilePage: React.FC = () => {
   const { user, updateProfile, changePassword } = useAuth();
   const { toast } = useToast();
 
-  const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
-
-  // Estado do formulário de perfil
+  // Estado do formulário de dados cadastrais
   const [profileForm, setProfileForm] = useState({
     name: '',
     phone: '',
@@ -41,10 +39,9 @@ export const ProfilePage: React.FC = () => {
     cidade: '',
     estado: 'SP',
   });
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSearchingCep, setIsSearchingCep] = useState(false);
 
-  // Estado do formulário de senha
+  // Estado dos campos de senha
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -53,7 +50,9 @@ export const ProfilePage: React.FC = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSavingPassword, setIsSavingPassword] = useState(false);
+
+  // Estado de envio
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -106,15 +105,38 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleSaveProfile = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!profileForm.name.trim()) {
       toast.warning('O nome não pode ficar em branco.');
       return;
     }
 
-    setIsSavingProfile(true);
+    const isChangingPassword = passwordForm.newPassword.trim().length > 0;
+
+    // Se preencheu nova senha, valida os requisitos
+    if (isChangingPassword) {
+      if (user?.hasPassword && !passwordForm.currentPassword) {
+        toast.warning('Informe sua senha atual para alterar para uma nova senha.');
+        return;
+      }
+
+      if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+        toast.error('A confirmação da nova senha não confere.');
+        return;
+      }
+
+      const failedRule = passwordRules.find((r) => !r.test(passwordForm.newPassword));
+      if (failedRule) {
+        toast.error(`Requisito de senha não atendido: ${failedRule.label}`);
+        return;
+      }
+    }
+
+    setIsSaving(true);
     try {
+      // 1. Atualiza dados cadastrais e endereço
       await updateProfile({
         name: profileForm.name.trim(),
         phone: profileForm.phone.trim() || null,
@@ -128,55 +150,27 @@ export const ProfilePage: React.FC = () => {
           estado: profileForm.estado.trim().toUpperCase(),
         },
       });
-      toast.success('Dados cadastrais atualizados com sucesso!');
+
+      // 2. Se preencheu nova senha, atualiza a senha
+      if (isChangingPassword) {
+        await changePassword({
+          currentPassword: passwordForm.currentPassword || undefined,
+          newPassword: passwordForm.newPassword,
+          confirmPassword: passwordForm.confirmPassword,
+        });
+        setPasswordForm({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+        toast.success('Perfil e nova senha salvos com sucesso!');
+      } else {
+        toast.success('Dados cadastrais atualizados com sucesso!');
+      }
     } catch (err: any) {
-      toast.error(err.response?.data?.error || err.message || 'Erro ao atualizar dados.');
+      toast.error(err.response?.data?.error || err.message || 'Erro ao salvar alterações do perfil.');
     } finally {
-      setIsSavingProfile(false);
-    }
-  };
-
-  const handleSavePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (user?.hasPassword && !passwordForm.currentPassword) {
-      toast.warning('Informe sua senha atual.');
-      return;
-    }
-
-    if (!passwordForm.newPassword) {
-      toast.warning('Informe a nova senha.');
-      return;
-    }
-
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast.error('A confirmação da nova senha não confere.');
-      return;
-    }
-
-    const failedRule = passwordRules.find((r) => !r.test(passwordForm.newPassword));
-    if (failedRule) {
-      toast.error(`Requisito não atendido: ${failedRule.label}`);
-      return;
-    }
-
-    setIsSavingPassword(true);
-    try {
-      await changePassword({
-        currentPassword: passwordForm.currentPassword || undefined,
-        newPassword: passwordForm.newPassword,
-        confirmPassword: passwordForm.confirmPassword,
-      });
-      toast.success(user?.hasPassword ? 'Senha alterada com sucesso!' : 'Senha criada com sucesso!');
-      setPasswordForm({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      });
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || err.message || 'Erro ao atualizar senha.');
-    } finally {
-      setIsSavingPassword(false);
+      setIsSaving(false);
     }
   };
 
@@ -218,53 +212,29 @@ export const ProfilePage: React.FC = () => {
               <CheckCircle2 className="w-4 h-4 text-indigo-500" />
               <span>Conformidade LGPD Ativa</span>
             </span>
+            <span className="flex items-center space-x-1 bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg">
+              <Lock className="w-4 h-4 text-amber-500" />
+              <span>{user?.hasPassword ? 'Senha Cadastrada' : 'Login via Google'}</span>
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Navegação por Abas */}
-      <div className="flex border-b border-slate-200 bg-white rounded-2xl p-1.5 shadow-sm space-x-2">
-        <button
-          type="button"
-          onClick={() => setActiveTab('profile')}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition flex items-center justify-center space-x-2 cursor-pointer ${
-            activeTab === 'profile'
-              ? 'bg-indigo-600 text-white shadow'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-          }`}
-        >
-          <UserIcon className="w-4 h-4" />
-          <span>Dados Pessoais & Endereço</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('security')}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition flex items-center justify-center space-x-2 cursor-pointer ${
-            activeTab === 'security'
-              ? 'bg-indigo-600 text-white shadow'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-          }`}
-        >
-          <Lock className="w-4 h-4" />
-          <span>Segurança & Senha</span>
-        </button>
-      </div>
-
-      {/* Conteúdo: Dados Pessoais & Endereço */}
-      {activeTab === 'profile' && (
-        <form onSubmit={handleSaveProfile} className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-sm space-y-6">
-          <div>
+      {/* Formulário Principal Unificado */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Seção 1: Informações Pessoais */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-sm space-y-4">
+          <div className="border-b border-slate-100 pb-3">
             <h2 className="text-lg font-bold text-slate-900 flex items-center space-x-2">
               <UserIcon className="w-5 h-5 text-indigo-600" />
               <span>Informações Pessoais</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Mantenha seus dados de contato e entrega sempre atualizados para recebimento de prêmios.
+              Seus dados de identificação e contato na plataforma.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Nome Completo <span className="text-rose-500">*</span>
@@ -317,182 +287,165 @@ export const ProfilePage: React.FC = () => {
               />
             </div>
           </div>
+        </div>
 
-          {/* Seção Endereço */}
-          <div className="pt-6 border-t border-slate-100 space-y-4">
+        {/* Seção 2: Endereço */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-sm space-y-4">
+          <div className="border-b border-slate-100 pb-3">
             <h2 className="text-lg font-bold text-slate-900 flex items-center space-x-2">
               <MapPin className="w-5 h-5 text-indigo-600" />
               <span>Endereço</span>
             </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Endereço para entrega de prêmios e correspondências oficiais.
+            </p>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  CEP <span className="text-rose-500">*</span>
-                </label>
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    name="cep"
-                    required
-                    placeholder="00000-000"
-                    value={profileForm.cep}
-                    onChange={handleProfileChange}
-                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleCepLookup}
-                    disabled={isSearchingCep}
-                    className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center space-x-1 cursor-pointer disabled:opacity-50"
-                  >
-                    {isSearchingCep ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Logradouro <span className="text-rose-500">*</span>
-                </label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                CEP <span className="text-rose-500">*</span>
+              </label>
+              <div className="flex space-x-2">
                 <input
                   type="text"
-                  name="logradouro"
+                  name="cep"
                   required
-                  placeholder="Rua, Avenida, Praça..."
-                  value={profileForm.logradouro}
+                  placeholder="00000-000"
+                  value={profileForm.cep}
                   onChange={handleProfileChange}
                   className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Número <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="numero"
-                  required
-                  placeholder="Ex: 123"
-                  value={profileForm.numero}
-                  onChange={handleProfileChange}
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Complemento
-                </label>
-                <input
-                  type="text"
-                  name="complemento"
-                  placeholder="Apto, Bloco..."
-                  value={profileForm.complemento}
-                  onChange={handleProfileChange}
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Bairro <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="bairro"
-                  required
-                  placeholder="Bairro"
-                  value={profileForm.bairro}
-                  onChange={handleProfileChange}
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Cidade <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="cidade"
-                  required
-                  placeholder="Cidade"
-                  value={profileForm.cidade}
-                  onChange={handleProfileChange}
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Estado (UF) <span className="text-rose-500">*</span>
-                </label>
-                <select
-                  name="estado"
-                  required
-                  value={profileForm.estado}
-                  onChange={handleProfileChange}
-                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                <button
+                  type="button"
+                  onClick={handleCepLookup}
+                  disabled={isSearchingCep}
+                  className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center space-x-1 cursor-pointer disabled:opacity-50"
+                  title="Buscar endereço pelo CEP"
                 >
-                  {['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'].map((uf) => (
-                    <option key={uf} value={uf}>
-                      {uf}
-                    </option>
-                  ))}
-                </select>
+                  {isSearchingCep ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                </button>
               </div>
             </div>
-          </div>
 
-          <div className="pt-4 flex justify-end">
-            <button
-              type="submit"
-              disabled={isSavingProfile}
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md shadow-indigo-200 transition disabled:opacity-50 cursor-pointer"
-            >
-              {isSavingProfile ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Salvando...</span>
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  <span>Salvar Alterações</span>
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      )}
+            <div className="md:col-span-2">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Logradouro <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="logradouro"
+                required
+                placeholder="Rua, Avenida, Praça..."
+                value={profileForm.logradouro}
+                onChange={handleProfileChange}
+                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              />
+            </div>
 
-      {/* Conteúdo: Segurança & Senha */}
-      {activeTab === 'security' && (
-        <form onSubmit={handleSavePassword} className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-sm space-y-6">
-          <div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Número <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="numero"
+                required
+                placeholder="Ex: 123"
+                value={profileForm.numero}
+                onChange={handleProfileChange}
+                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Complemento
+              </label>
+              <input
+                type="text"
+                name="complemento"
+                placeholder="Apto, Bloco..."
+                value={profileForm.complemento}
+                onChange={handleProfileChange}
+                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Bairro <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="bairro"
+                required
+                placeholder="Bairro"
+                value={profileForm.bairro}
+                onChange={handleProfileChange}
+                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Cidade <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="cidade"
+                required
+                placeholder="Cidade"
+                value={profileForm.cidade}
+                onChange={handleProfileChange}
+                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Estado (UF) <span className="text-rose-500">*</span>
+              </label>
+              <select
+                name="estado"
+                required
+                value={profileForm.estado}
+                onChange={handleProfileChange}
+                className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              >
+                {['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'].map((uf) => (
+                  <option key={uf} value={uf}>
+                    {uf}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Seção 3: Senha de Acesso */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 shadow-sm space-y-4">
+          <div className="border-b border-slate-100 pb-3">
             <h2 className="text-lg font-bold text-slate-900 flex items-center space-x-2">
               <KeyRound className="w-5 h-5 text-indigo-600" />
               <span>{user?.hasPassword ? 'Alterar Senha de Acesso' : 'Definir Senha de Acesso'}</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
               {user?.hasPassword
-                ? 'Atualize periodicamente sua senha para manter sua conta protegida.'
-                : 'Você entrou utilizando sua conta Google. Defina uma senha para poder logar diretamente com e-mail e senha.'}
+                ? 'Preencha os campos abaixo apenas se desejar trocar sua senha de acesso.'
+                : 'Defina uma senha caso queira acessar a plataforma diretamente com seu e-mail e senha, sem depender exclusivamente da conta Google.'}
             </p>
           </div>
 
-          <div className="space-y-4 max-w-md">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
             {user?.hasPassword && (
-              <div>
+              <div className="md:col-span-2 max-w-md">
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Senha Atual <span className="text-rose-500">*</span>
+                  Senha Atual
                 </label>
                 <div className="relative">
                   <input
                     type={showCurrentPassword ? 'text' : 'password'}
-                    required
                     autoComplete="current-password"
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
@@ -512,16 +465,15 @@ export const ProfilePage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Nova Senha <span className="text-rose-500">*</span>
+                Nova Senha
               </label>
               <div className="relative">
                 <input
                   type={showNewPassword ? 'text' : 'password'}
-                  required
                   autoComplete="new-password"
                   value={passwordForm.newPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                  placeholder="Crie uma nova senha forte"
+                  placeholder="Deixe em branco para não alterar"
                   className="w-full px-3.5 py-2.5 pr-10 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                 />
                 <button
@@ -552,12 +504,11 @@ export const ProfilePage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Confirmar Nova Senha <span className="text-rose-500">*</span>
+                Confirmar Nova Senha
               </label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
-                  required
                   autoComplete="new-password"
                   value={passwordForm.confirmPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
@@ -578,29 +529,30 @@ export const ProfilePage: React.FC = () => {
                   <p className="mt-1 text-xs text-rose-500 font-medium">As senhas digitadas não coincidem.</p>
                 )}
             </div>
-
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={isSavingPassword}
-                className="inline-flex items-center space-x-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md shadow-indigo-200 transition disabled:opacity-50 cursor-pointer"
-              >
-                {isSavingPassword ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Atualizando Senha...</span>
-                  </>
-                ) : (
-                  <>
-                    <Lock className="w-4 h-4" />
-                    <span>{user?.hasPassword ? 'Salvar Nova Senha' : 'Criar Senha de Acesso'}</span>
-                  </>
-                )}
-              </button>
-            </div>
           </div>
-        </form>
-      )}
+        </div>
+
+        {/* Botão Salvar Todas as Alterações */}
+        <div className="flex justify-end pt-2">
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="inline-flex items-center space-x-2 px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition disabled:opacity-50 cursor-pointer text-sm"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Salvando Perfil...</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                <span>Salvar Todas as Alterações</span>
+              </>
+            )}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
