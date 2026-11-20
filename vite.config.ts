@@ -9,7 +9,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:4000',
+        // 127.0.0.1 explícito evita EPERM no macOS (Node 18+ resolve localhost → ::1)
+        target: 'http://127.0.0.1:4000',
         changeOrigin: true,
       },
     },

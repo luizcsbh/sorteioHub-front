@@ -31,6 +31,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   needsProfileCompletion: boolean;
+  /** true quando o login Google vinculou uma conta existente pelo e-mail */
+  linkedByEmail: boolean;
   loginWithGoogle: (credential?: string, mockProfile?: any) => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
   register: (
@@ -59,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [needsProfileCompletion, setNeedsProfileCompletion] = useState<boolean>(false);
+  const [linkedByEmail, setLinkedByEmail] = useState<boolean>(false);
 
   useEffect(() => {
     async function loadUser() {
@@ -81,13 +84,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const res = await api.post('/auth/google', { credential, mockProfile });
-      const { token: newToken, user: newUser, needsProfileCompletion: needsCompletion } = res.data;
+      const { token: newToken, user: newUser, needsProfileCompletion: needsCompletion, linkedByEmail: linked } = res.data;
 
       localStorage.setItem('sorteiohub_token', newToken);
       localStorage.setItem('sorteiohub_user', JSON.stringify(newUser));
       setToken(newToken);
       setUser(newUser);
       setNeedsProfileCompletion(needsCompletion);
+      setLinkedByEmail(!!linked);
     } finally {
       setIsLoading(false);
     }
@@ -187,6 +191,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(null);
     setUser(null);
     setNeedsProfileCompletion(false);
+    setLinkedByEmail(false);
   };
 
   const refreshUser = async () => {
@@ -208,6 +213,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!token && !!user,
         isLoading,
         needsProfileCompletion,
+        linkedByEmail,
         loginWithGoogle,
         loginWithEmail,
         register,
