@@ -167,14 +167,17 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Section: Sorteios com Filtros */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-3">
             <div>
-              <h2 className="text-xl font-black text-white">Sorteios</h2>
-              <p className="text-xs text-white/60">Sorteios autorizados dos seus grupos fechados</p>
+              <h2 className="text-xl sm:text-2xl font-black text-white flex items-center space-x-2">
+                <Gift className="w-6 h-6 text-yellow-400" />
+                <span>Sorteios</span>
+              </h2>
+              <p className="text-xs text-white/60 mt-0.5">Sorteios autorizados dos seus grupos fechados</p>
             </div>
 
-            {/* Filtros sem scroll horizontal */}
-            <div className="flex items-center flex-wrap gap-1.5">
+            {/* Botões lado a lado; ao diminuir a tela quebram para a linha de baixo */}
+            <div className="flex flex-row flex-wrap items-center gap-2 w-full pt-1">
               {[
                 { id: 'todos', label: 'Todos' },
                 { id: 'em_andamento', label: 'Em Andamento' },
@@ -185,7 +188,7 @@ export const DashboardPage: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setFilter(tab.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
                     filter === tab.id
                       ? 'bg-yellow-400 text-slate-950 shadow-md shadow-yellow-400/20'
                       : 'bg-white/10 border border-white/15 text-white/70 hover:bg-white/20 hover:text-white'
@@ -250,9 +253,9 @@ export const DashboardPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         {hasParticipated && (
-                          <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center space-x-1">
+                          <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center space-x-1 shrink-0">
                             <CheckCircle className="w-3.5 h-3.5" />
                             <span>Inscrito</span>
                           </span>
@@ -261,7 +264,7 @@ export const DashboardPage: React.FC = () => {
                         {raffle.status === 'DRAWN' ? (
                           <Link
                             to={`/raffles/${raffle.id}/results`}
-                            className="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition"
+                            className="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition whitespace-nowrap shrink-0"
                           >
                             <span>Ver Resultado</span>
                             <ArrowRight className="w-3.5 h-3.5 ml-1" />
@@ -269,7 +272,7 @@ export const DashboardPage: React.FC = () => {
                         ) : (
                           <Link
                             to={`/raffles/${raffle.id}`}
-                            className="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-black bg-yellow-400 hover:bg-yellow-300 text-slate-950 transition shadow-md shadow-yellow-400/20"
+                            className="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-black bg-yellow-400 hover:bg-yellow-300 text-slate-950 transition shadow-md shadow-yellow-400/20 whitespace-nowrap shrink-0"
                           >
                             <span>Detalhes & Participar</span>
                             <ArrowRight className="w-3.5 h-3.5 ml-1" />

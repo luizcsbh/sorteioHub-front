@@ -7,6 +7,7 @@ export const RafflesPage: React.FC = () => {
   const [raffles, setRaffles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('todos');
 
   useEffect(() => {
     async function load() {
@@ -22,35 +23,67 @@ export const RafflesPage: React.FC = () => {
     load();
   }, []);
 
-  const filtered = raffles.filter(
-    (r) =>
-      r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.prize.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.group?.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filtered = raffles.filter((r) => {
+    const matchesSearch =
+      r.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.prize?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.group?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    if (!matchesSearch) return false;
+
+    if (statusFilter === 'todos') return true;
+    if (statusFilter === 'em_andamento') return r.status === 'PUBLISHED';
+    if (statusFilter === 'sorteados') return r.status === 'DRAWN';
+    if (statusFilter === 'inscrito') return r.participants?.length > 0;
+    return true;
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center space-x-2">
-            <Gift className="w-8 h-8 text-yellow-400" />
-            <span>Sorteios Autorizados</span>
-          </h1>
-          <p className="text-xs text-white/60 mt-1">
-            Participe dos sorteios ativos vinculados aos seus grupos fechados
-          </p>
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center space-x-2">
+              <Gift className="w-8 h-8 text-yellow-400" />
+              <span>Sorteios Autorizados</span>
+            </h1>
+            <p className="text-xs text-white/60 mt-1">
+              Participe dos sorteios ativos vinculados aos seus grupos fechados
+            </p>
+          </div>
+
+          <div className="relative max-w-xs w-full">
+            <Search className="w-4 h-4 absolute left-3 top-3 text-white/40" />
+            <input
+              type="text"
+              placeholder="Buscar por sorteio, prêmio ou grupo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-xl text-xs text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+            />
+          </div>
         </div>
 
-        <div className="relative max-w-xs w-full">
-          <Search className="w-4 h-4 absolute left-3 top-3 text-white/40" />
-          <input
-            type="text"
-            placeholder="Buscar por sorteio, prêmio ou grupo..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-xl text-xs text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
-          />
+        {/* Botões lado a lado; ao diminuir a tela quebram para a linha de baixo */}
+        <div className="flex flex-row flex-wrap items-center gap-2 w-full pt-1">
+          {[
+            { id: 'todos', label: 'Todos os Sorteios' },
+            { id: 'em_andamento', label: 'Em Andamento' },
+            { id: 'sorteados', label: 'Sorteados' },
+            { id: 'inscrito', label: 'Minhas Inscrições' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setStatusFilter(tab.id)}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
+                statusFilter === tab.id
+                  ? 'bg-yellow-400 text-slate-950 shadow-md shadow-yellow-400/20'
+                  : 'bg-white/10 border border-white/15 text-white/70 hover:bg-white/20 hover:text-white'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -100,15 +133,15 @@ export const RafflesPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                  <div className="text-white/50 flex items-center space-x-1">
+                <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="text-white/50 flex items-center space-x-1 shrink-0">
                     <Clock className="w-3.5 h-3.5 text-yellow-400" />
                     <span>{new Date(raffle.drawDateTime).toLocaleDateString('pt-BR')}</span>
                   </div>
 
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     {hasParticipated && (
-                      <span className="text-[11px] font-bold text-emerald-400 flex items-center space-x-0.5">
+                      <span className="text-[11px] font-bold text-emerald-400 flex items-center space-x-0.5 shrink-0">
                         <CheckCircle className="w-3.5 h-3.5" />
                         <span>Inscrito</span>
                       </span>
@@ -116,7 +149,7 @@ export const RafflesPage: React.FC = () => {
 
                     <Link
                       to={raffle.status === 'DRAWN' ? `/raffles/${raffle.id}/results` : `/raffles/${raffle.id}`}
-                      className="inline-flex items-center text-xs font-bold text-yellow-400 hover:text-yellow-300 hover:underline"
+                      className="inline-flex items-center text-xs font-bold text-yellow-400 hover:text-yellow-300 hover:underline whitespace-nowrap shrink-0"
                     >
                       <span>{raffle.status === 'DRAWN' ? 'Resultado' : 'Ver Detalhes'}</span>
                       <ArrowRight className="w-3.5 h-3.5 ml-1" />
