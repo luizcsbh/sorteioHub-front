@@ -306,7 +306,7 @@ export const RaffleDetailsPage: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center pt-1">
               {[
-                { step: '1', label: 'Acessa', desc: 'sorteiohub.com.br/participar' },
+                { step: '1', label: 'Acessa', desc: 'sorteioclub.com.br/participar' },
                 { step: '2', label: 'Digita', desc: `PIN: ${getPin(raffle.id)}` },
                 { step: '3', label: 'Concorre!', desc: 'Bilhete emitido automaticamente 🎉' },
               ].map(({ step, label, desc }) => (

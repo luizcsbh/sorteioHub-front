@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Cookie, X, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const COOKIE_STORAGE_KEY = 'sorteiohub_cookies_consent';
+const COOKIE_STORAGE_KEY = 'sorteioclub_cookies_consent';
 
 export const CookieConsent: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);

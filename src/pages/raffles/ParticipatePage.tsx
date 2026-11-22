@@ -215,7 +215,7 @@ export const ParticipatePage: React.FC = () => {
           <div className="w-11 h-11 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/30 group-hover:scale-105 transition">
             <Gift className="w-6 h-6 text-slate-950" />
           </div>
-          <span className="text-2xl font-black tracking-tight text-white">SorteioHub</span>
+          <span className="text-2xl font-black tracking-tight text-white">SorteioClub</span>
         </Link>
 
         <div className="flex items-center space-x-3">
@@ -619,7 +619,7 @@ export const ParticipatePage: React.FC = () => {
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
       <footer className="px-6 py-6 text-center text-xs text-white/30 relative z-20">
-        © 2026 SorteioHub · Plataforma Segura e Oficial de Sorteios
+        © 2026 SorteioClub · Plataforma Segura e Oficial de Sorteios
       </footer>
     </div>
   );

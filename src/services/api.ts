@@ -12,7 +12,7 @@ export const api = axios.create({
 
 // Interceptor para injetar o JWT automaticamente
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('sorteiohub_token');
+  const token = localStorage.getItem('sorteioclub_token') || localStorage.getItem('sorteiohub_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -24,6 +24,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      localStorage.removeItem('sorteioclub_token');
+      localStorage.removeItem('sorteioclub_user');
       localStorage.removeItem('sorteiohub_token');
       localStorage.removeItem('sorteiohub_user');
       if (window.location.pathname !== '/login') {

@@ -102,7 +102,7 @@ export default function ResetPasswordPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-400/10 border border-yellow-400/30 rounded-2xl mb-4">
             <span className="text-3xl">🎯</span>
           </div>
-          <h1 className="text-2xl font-black text-white tracking-tight">SorteioHub</h1>
+          <h1 className="text-2xl font-black text-white tracking-tight">SorteioClub</h1>
           <p className="text-white/50 text-sm mt-1">Plataforma de Sorteios Privados</p>
         </div>
 

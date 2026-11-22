@@ -29,7 +29,7 @@ export const Navbar: React.FC = () => {
                 <Gift className="w-6 h-6 text-slate-950" />
               </div>
               <span className="text-xl font-black text-white tracking-tight">
-                SorteioHub
+                SorteioClub
               </span>
             </Link>
 

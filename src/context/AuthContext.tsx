@@ -53,11 +53,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('sorteiohub_user');
+    const saved = localStorage.getItem('sorteioclub_user') || localStorage.getItem('sorteiohub_user');
     return saved ? JSON.parse(saved) : null;
   });
   const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem('sorteiohub_token');
+    return localStorage.getItem('sorteioclub_token') || localStorage.getItem('sorteiohub_token');
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [needsProfileCompletion, setNeedsProfileCompletion] = useState<boolean>(false);
@@ -69,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           const res = await api.get('/auth/me');
           setUser(res.data);
-          localStorage.setItem('sorteiohub_user', JSON.stringify(res.data));
+          localStorage.setItem('sorteioclub_user', JSON.stringify(res.data));
           setNeedsProfileCompletion(!res.data.isCpfValidated || !res.data.address);
         } catch {
           logout();
@@ -86,8 +86,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await api.post('/auth/google', { credential, mockProfile });
       const { token: newToken, user: newUser, needsProfileCompletion: needsCompletion, linkedByEmail: linked } = res.data;
 
-      localStorage.setItem('sorteiohub_token', newToken);
-      localStorage.setItem('sorteiohub_user', JSON.stringify(newUser));
+      localStorage.setItem('sorteioclub_token', newToken);
+      localStorage.setItem('sorteioclub_user', JSON.stringify(newUser));
       setToken(newToken);
       setUser(newUser);
       setNeedsProfileCompletion(needsCompletion);
@@ -103,8 +103,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await api.post('/auth/login', { email, password });
       const { token: newToken, user: newUser, needsProfileCompletion: needsCompletion } = res.data;
 
-      localStorage.setItem('sorteiohub_token', newToken);
-      localStorage.setItem('sorteiohub_user', JSON.stringify(newUser));
+      localStorage.setItem('sorteioclub_token', newToken);
+      localStorage.setItem('sorteioclub_user', JSON.stringify(newUser));
       setToken(newToken);
       setUser(newUser);
       setNeedsProfileCompletion(needsCompletion ?? false);
@@ -133,8 +133,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       const { token: newToken, user: newUser, needsProfileCompletion: needsCompletion } = res.data;
 
-      localStorage.setItem('sorteiohub_token', newToken);
-      localStorage.setItem('sorteiohub_user', JSON.stringify(newUser));
+      localStorage.setItem('sorteioclub_token', newToken);
+      localStorage.setItem('sorteioclub_user', JSON.stringify(newUser));
       setToken(newToken);
       setUser(newUser);
       setNeedsProfileCompletion(needsCompletion ?? false);
@@ -150,8 +150,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await api.post('/auth/complete-profile', data);
       const { token: newToken, user: updatedUser } = res.data;
 
-      localStorage.setItem('sorteiohub_token', newToken);
-      localStorage.setItem('sorteiohub_user', JSON.stringify(updatedUser));
+      localStorage.setItem('sorteioclub_token', newToken);
+      localStorage.setItem('sorteioclub_user', JSON.stringify(updatedUser));
       setToken(newToken);
       setUser(updatedUser);
       setNeedsProfileCompletion(false);
@@ -165,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const res = await api.put('/auth/profile', data);
       setUser(res.data);
-      localStorage.setItem('sorteiohub_user', JSON.stringify(res.data));
+      localStorage.setItem('sorteioclub_user', JSON.stringify(res.data));
     } finally {
       setIsLoading(false);
     }
@@ -178,7 +178,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (user) {
         const updated = { ...user, hasPassword: true };
         setUser(updated);
-        localStorage.setItem('sorteiohub_user', JSON.stringify(updated));
+        localStorage.setItem('sorteioclub_user', JSON.stringify(updated));
       }
     } finally {
       setIsLoading(false);
@@ -186,6 +186,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    localStorage.removeItem('sorteioclub_token');
+    localStorage.removeItem('sorteioclub_user');
     localStorage.removeItem('sorteiohub_token');
     localStorage.removeItem('sorteiohub_user');
     setToken(null);
@@ -199,7 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const res = await api.get('/auth/me');
       setUser(res.data);
-      localStorage.setItem('sorteiohub_user', JSON.stringify(res.data));
+      localStorage.setItem('sorteioclub_user', JSON.stringify(res.data));
     } catch (e) {
       console.error(e);
     }

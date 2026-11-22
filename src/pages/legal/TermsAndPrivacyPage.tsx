@@ -23,7 +23,7 @@ export const TermsAndPrivacyPage: React.FC = () => {
 
         <div className="space-y-4 text-xs text-white/70 leading-relaxed">
           <p>
-            <strong className="text-white">1.1. Finalidade do Tratamento:</strong> A plataforma SorteioHub coleta nome, e-mail autenticado via Google, CPF e endereço exclusivamente para as finalidades legítimas de:
+            <strong className="text-white">1.1. Finalidade do Tratamento:</strong> A plataforma SorteioClub coleta nome, e-mail autenticado via Google, CPF e endereço exclusivamente para as finalidades legítimas de:
           </p>
           <ul className="list-disc pl-5 space-y-1 text-white/80">
             <li>Identificação inequívoca do participante para prevenção de fraudes e duplicidades;</li>

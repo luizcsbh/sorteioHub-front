@@ -182,7 +182,7 @@ export const LoginPage: React.FC = () => {
     }
 
     // Fallback amigável se a API externa do Google não estiver acessível
-    handleMockLogin('admin@sorteiohub.com.br', 'Administrador Geral');
+    handleMockLogin('admin@sorteioclub.com.br', 'Administrador Geral');
   };
 
   const handleMockLogin = async (email: string, name: string) => {
@@ -267,7 +267,7 @@ export const LoginPage: React.FC = () => {
           <div className="w-12 h-12 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/30">
             <Gift className="w-7 h-7 text-slate-950" />
           </div>
-          <span className="text-white text-2xl font-black tracking-tight">SorteioHub</span>
+          <span className="text-white text-2xl font-black tracking-tight">SorteioClub</span>
         </div>
 
         {/* Hero text */}
@@ -310,7 +310,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Footer */}
         <p className="text-white/30 text-xs">
-          © 2026 SorteioHub · Todos os direitos reservados
+          © 2026 SorteioClub · Todos os direitos reservados
         </p>
       </div>
 
@@ -323,7 +323,7 @@ export const LoginPage: React.FC = () => {
             <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center">
               <Gift className="w-6 h-6 text-slate-950" />
             </div>
-            <span className="text-white text-xl font-black">SorteioHub</span>
+            <span className="text-white text-xl font-black">SorteioClub</span>
           </div>
 
           {/* Card */}

@@ -32,7 +32,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900">
         <div className="text-sm font-bold text-yellow-300 animate-pulse flex items-center space-x-2">
           <div className="w-4 h-4 rounded-full border-2 border-yellow-400 border-t-transparent animate-spin" />
-          <span>Carregando SorteioHub...</span>
+          <span>Carregando SorteioClub...</span>
         </div>
       </div>
     );
@@ -191,7 +191,7 @@ const AppContent: React.FC = () => {
         <footer className="border-t border-white/10 bg-slate-950/80 backdrop-blur-xl py-6 text-white/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
             <div>
-              © {new Date().getFullYear()} SorteioHub • Plataforma de Sorteios Privados. Todos os direitos reservados.
+              © {new Date().getFullYear()} SorteioClub • Plataforma de Sorteios Privados. Todos os direitos reservados.
             </div>
             <div className="flex items-center space-x-4">
               <a href="/legal" className="hover:text-yellow-400 transition">

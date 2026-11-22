@@ -16,7 +16,7 @@ export const JoinInvitePage: React.FC = () => {
   useEffect(() => {
     if (!isAuthenticated) {
       // Salva URL para retornar após o login
-      localStorage.setItem('sorteiohub_return_url', `/invite/${token}`);
+      localStorage.setItem('sorteioclub_return_url', `/invite/${token}`);
       navigate('/login');
       return;
     }

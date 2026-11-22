@@ -90,7 +90,7 @@ export const DashboardPage: React.FC = () => {
       <div className="bg-gradient-to-r from-purple-950/80 via-indigo-950 to-slate-900 rounded-3xl p-8 text-white border border-white/15 shadow-2xl backdrop-blur-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
         <div className="relative z-10">
           <span className="inline-block px-3 py-1 rounded-full bg-yellow-400/20 border border-yellow-400/30 text-yellow-300 text-xs font-bold uppercase tracking-wider backdrop-blur-sm mb-3">
-            SorteioHub • Grupos Fechados & Sorteios Auditáveis
+            SorteioClub • Grupos Fechados & Sorteios Auditáveis
           </span>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">Olá, {user?.name}!</h1>
           <p className="text-white/60 text-sm mt-1">
