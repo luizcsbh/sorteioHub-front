@@ -253,7 +253,7 @@ export const AdminDashboardPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center space-x-2 overflow-x-auto">
+          <div className="flex items-center flex-wrap gap-2">
             {[
               { id: 'users', label: 'Gestão de Usuários' },
               { id: 'groups', label: 'Por Grupo' },

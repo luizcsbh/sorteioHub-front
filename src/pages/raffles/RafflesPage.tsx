@@ -67,9 +67,9 @@ export const RafflesPage: React.FC = () => {
             return (
               <div
                 key={raffle.id}
-                className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/15 p-6 hover:border-yellow-400/40 transition flex flex-col justify-between space-y-4 shadow-xl text-white"
+                className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/15 p-6 hover:border-yellow-400/40 transition flex flex-col justify-between space-y-4 shadow-xl text-white overflow-hidden"
               >
-                <div className="space-y-3">
+                <div className="space-y-3 min-w-0">
                   <div className="flex justify-between items-start">
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
@@ -86,12 +86,12 @@ export const RafflesPage: React.FC = () => {
                         ? 'Sorteado'
                         : raffle.status}
                     </span>
-                    <span className="text-xs text-white/50">Grupo: {raffle.group?.name}</span>
+                    <span className="text-xs text-white/50 truncate max-w-[150px]">Grupo: {raffle.group?.name}</span>
                   </div>
 
-                  <div>
-                    <h3 className="text-lg font-black text-white">{raffle.title}</h3>
-                    <p className="text-xs text-white/70 line-clamp-2 mt-1">{raffle.description}</p>
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-black text-white break-words">{raffle.title}</h3>
+                    <p className="text-xs text-white/70 line-clamp-2 mt-1 break-words">{raffle.description}</p>
                   </div>
 
                   <div className="p-3 bg-yellow-400/10 border border-yellow-400/20 rounded-xl flex items-center justify-between">

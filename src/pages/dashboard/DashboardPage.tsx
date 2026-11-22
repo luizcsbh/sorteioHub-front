@@ -173,8 +173,8 @@ export const DashboardPage: React.FC = () => {
               <p className="text-xs text-white/60">Sorteios autorizados dos seus grupos fechados</p>
             </div>
 
-            {/* Filtros */}
-            <div className="flex items-center space-x-1.5 overflow-x-auto pb-2 sm:pb-0">
+            {/* Filtros sem scroll horizontal */}
+            <div className="flex items-center flex-wrap gap-1.5">
               {[
                 { id: 'todos', label: 'Todos' },
                 { id: 'em_andamento', label: 'Em Andamento' },
