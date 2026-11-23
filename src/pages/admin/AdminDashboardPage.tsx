@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
+import { Pagination } from '../../components/Pagination';
 import {
   Shield,
   Users,
@@ -21,6 +22,7 @@ import {
   RefreshCw,
   UserCheck,
   UserX,
+  Filter,
 } from 'lucide-react';
 
 export const AdminDashboardPage: React.FC = () => {
@@ -32,12 +34,39 @@ export const AdminDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeReportTab, setActiveReportTab] = useState<'users' | 'groups' | 'raffles' | 'winners' | 'invites' | 'audit'>('users');
 
-  // Gestão de Usuários
+  // Gestão de Usuários & Paginação
   const [usersList, setUsersList] = useState<any[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('');
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+  const [userPage, setUserPage] = useState(1);
+  const [userPageSize, setUserPageSize] = useState(10);
+  const [userTotalPages, setUserTotalPages] = useState(1);
+  const [userTotalItems, setUserTotalItems] = useState(0);
+
+  // Trilha de Auditoria & Paginação
+  const [auditList, setAuditList] = useState<any[]>([]);
+  const [auditLoading, setAuditLoading] = useState(false);
+  const [auditSearchQuery, setAuditSearchQuery] = useState('');
+  const [auditActionFilter, setAuditActionFilter] = useState('ALL');
+  const [auditPage, setAuditPage] = useState(1);
+  const [auditPageSize, setAuditPageSize] = useState(10);
+  const [auditTotalPages, setAuditTotalPages] = useState(1);
+  const [auditTotalItems, setAuditTotalItems] = useState(0);
+
+  // Paginação dos Relatórios em Abas
+  const [groupsPage, setGroupsPage] = useState(1);
+  const [groupsPageSize, setGroupsPageSize] = useState(10);
+
+  const [rafflesPage, setRafflesPage] = useState(1);
+  const [rafflesPageSize, setRafflesPageSize] = useState(10);
+
+  const [winnersPage, setWinnersPage] = useState(1);
+  const [winnersPageSize, setWinnersPageSize] = useState(10);
+
+  const [invitesPage, setInvitesPage] = useState(1);
+  const [invitesPageSize, setInvitesPageSize] = useState(10);
 
   // Modal Criar Sorteio
   const [showRaffleModal, setShowRaffleModal] = useState(false);
@@ -78,21 +107,57 @@ export const AdminDashboardPage: React.FC = () => {
     }
   };
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (page = userPage, limit = userPageSize) => {
     setUsersLoading(true);
     try {
       const res = await api.get('/admin/users', {
         params: {
           search: userSearchQuery || undefined,
           role: userRoleFilter || undefined,
+          page,
+          limit,
         },
       });
-      setUsersList(res.data);
+      if (res.data?.users && res.data?.pagination) {
+        setUsersList(res.data.users);
+        setUserTotalPages(res.data.pagination.totalPages);
+        setUserTotalItems(res.data.pagination.total);
+        setUserPage(res.data.pagination.page);
+      } else if (Array.isArray(res.data)) {
+        setUsersList(res.data);
+        setUserTotalItems(res.data.length);
+        setUserTotalPages(Math.ceil(res.data.length / limit) || 1);
+        setUserPage(page);
+      }
     } catch (err: any) {
       console.error('Erro ao carregar usuários:', err);
       toast.error(err.response?.data?.error || 'Erro ao carregar lista de usuários.', 'Erro');
     } finally {
       setUsersLoading(false);
+    }
+  };
+
+  const fetchAuditLogs = async (page = auditPage, limit = auditPageSize) => {
+    setAuditLoading(true);
+    try {
+      const res = await api.get('/admin/audit-logs', {
+        params: {
+          search: auditSearchQuery || undefined,
+          action: auditActionFilter !== 'ALL' ? auditActionFilter : undefined,
+          page,
+          limit,
+        },
+      });
+      if (res.data?.logs && res.data?.pagination) {
+        setAuditList(res.data.logs);
+        setAuditTotalPages(res.data.pagination.totalPages);
+        setAuditTotalItems(res.data.pagination.total);
+        setAuditPage(res.data.pagination.page);
+      }
+    } catch (err: any) {
+      console.error('Erro ao carregar trilha de auditoria:', err);
+    } finally {
+      setAuditLoading(false);
     }
   };
 
@@ -107,7 +172,7 @@ export const AdminDashboardPage: React.FC = () => {
           ? 'Administrador'
           : 'Participante';
       toast.success(`Papel de ${userName} alterado para ${roleLabel}!`, 'Papel Atualizado');
-      fetchUsers();
+      fetchUsers(userPage, userPageSize);
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Não foi possível alterar o papel do usuário.', 'Erro');
     } finally {
@@ -117,14 +182,19 @@ export const AdminDashboardPage: React.FC = () => {
 
   useEffect(() => {
     loadAdminData();
-    fetchUsers();
+    fetchUsers(1, userPageSize);
+    fetchAuditLogs(1, auditPageSize);
   }, []);
 
   useEffect(() => {
     if (activeReportTab === 'users') {
-      fetchUsers();
+      setUserPage(1);
+      fetchUsers(1, userPageSize);
+    } else if (activeReportTab === 'audit') {
+      setAuditPage(1);
+      fetchAuditLogs(1, auditPageSize);
     }
-  }, [userRoleFilter]);
+  }, [userRoleFilter, activeReportTab]);
 
   const handleCreateRaffleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -288,7 +358,7 @@ export const AdminDashboardPage: React.FC = () => {
                     type="text"
                     value={userSearchQuery}
                     onChange={(e) => setUserSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && fetchUsers()}
+                    onKeyDown={(e) => e.key === 'Enter' && fetchUsers(1, userPageSize)}
                     placeholder="Buscar por nome, e-mail ou telefone... (Pressione Enter)"
                     className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white/10 text-white placeholder-white/40"
                   />
@@ -307,7 +377,7 @@ export const AdminDashboardPage: React.FC = () => {
                   </select>
 
                   <button
-                    onClick={fetchUsers}
+                    onClick={() => fetchUsers(1, userPageSize)}
                     disabled={usersLoading}
                     className="p-2 rounded-xl border border-white/20 hover:bg-white/20 text-white transition disabled:opacity-50"
                     title="Recarregar Usuários"
@@ -472,159 +542,402 @@ export const AdminDashboardPage: React.FC = () => {
                   </table>
                 </div>
               )}
-            </div>
-          )}
-          {activeReportTab === 'groups' && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
-                    <th className="pb-3">Grupo</th>
-                    <th className="pb-3">Status</th>
-                    <th className="pb-3">Membros</th>
-                    <th className="pb-3">Sorteios</th>
-                    <th className="pb-3">Convites Emitidos</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/10">
-                  {reports?.participantsByGroup?.map((g: any) => (
-                    <tr key={g.id} className="hover:bg-white/5 transition">
-                      <td className="py-3 font-semibold text-white">{g.name}</td>
-                      <td className="py-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-white/80 border border-white/15">
-                          {g.status}
-                        </span>
-                      </td>
-                      <td className="py-3 text-white/70">{g._count?.members || 0}</td>
-                      <td className="py-3 text-white/70">{g._count?.raffles || 0}</td>
-                      <td className="py-3 text-white/70">{g._count?.invitations || 0}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+
+              {/* Paginação de Usuários */}
+              <Pagination
+                currentPage={userPage}
+                totalPages={userTotalPages}
+                totalItems={userTotalItems}
+                pageSize={userPageSize}
+                onPageChange={(newPage) => {
+                  setUserPage(newPage);
+                  fetchUsers(newPage, userPageSize);
+                }}
+                onPageSizeChange={(newSize) => {
+                  setUserPageSize(newSize);
+                  setUserPage(1);
+                  fetchUsers(1, newSize);
+                }}
+                pageSizeOptions={[10, 25, 50]}
+                itemName="usuários"
+              />
             </div>
           )}
 
-          {activeReportTab === 'raffles' && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
-                    <th className="pb-3">Sorteio</th>
-                    <th className="pb-3">Status</th>
-                    <th className="pb-3">Data Prevista</th>
-                    <th className="pb-3">Inscritos</th>
-                    <th className="pb-3">Ganhadores</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/10">
-                  {reports?.participantsByRaffle?.map((r: any) => (
-                    <tr key={r.id} className="hover:bg-white/5 transition">
-                      <td className="py-3 font-semibold text-white">{r.title}</td>
-                      <td className="py-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-white/80 border border-white/15">
-                          {r.status}
-                        </span>
-                      </td>
-                      <td className="py-3 text-white/70">{new Date(r.drawDateTime).toLocaleDateString('pt-BR')}</td>
-                      <td className="py-3 text-white/70">{r._count?.participants || 0}</td>
-                      <td className="py-3 text-white/70">{r._count?.winners || 0}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          {activeReportTab === 'groups' && (() => {
+            const allGroups = reports?.participantsByGroup || [];
+            const total = allGroups.length;
+            const totalPages = Math.ceil(total / groupsPageSize) || 1;
+            const paginated = allGroups.slice(
+              (groupsPage - 1) * groupsPageSize,
+              groupsPage * groupsPageSize
+            );
 
-          {activeReportTab === 'winners' && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
-                    <th className="pb-3">Sorteio</th>
-                    <th className="pb-3">Prêmio</th>
-                    <th className="pb-3">Ganhador</th>
-                    <th className="pb-3">CPF Mascarado (LGPD)</th>
-                    <th className="pb-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/10">
-                  {reports?.winnersReport?.map((w: any) => (
-                    <tr key={w.id} className="hover:bg-white/5 transition">
-                      <td className="py-3 font-semibold text-white">{w.raffle?.title}</td>
-                      <td className="py-3 text-yellow-400 font-bold">{w.raffle?.prize}</td>
-                      <td className="py-3 text-white">{w.user?.name}</td>
-                      <td className="py-3 font-mono text-white/60">{w.user?.cpfMasked}</td>
-                      <td className="py-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                          {w.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+            return (
+              <div className="space-y-4">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
+                        <th className="pb-3">Grupo</th>
+                        <th className="pb-3">Status</th>
+                        <th className="pb-3">Membros</th>
+                        <th className="pb-3">Sorteios</th>
+                        <th className="pb-3">Convites Emitidos</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {paginated.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-white/40">
+                            Nenhum grupo encontrado.
+                          </td>
+                        </tr>
+                      ) : (
+                        paginated.map((g: any) => (
+                          <tr key={g.id} className="hover:bg-white/5 transition">
+                            <td className="py-3 font-semibold text-white">{g.name}</td>
+                            <td className="py-3">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-white/80 border border-white/15">
+                                {g.status}
+                              </span>
+                            </td>
+                            <td className="py-3 text-white/70">{g._count?.members || 0}</td>
+                            <td className="py-3 text-white/70">{g._count?.raffles || 0}</td>
+                            <td className="py-3 text-white/70">{g._count?.invitations || 0}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
 
-          {activeReportTab === 'invites' && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
-                    <th className="pb-3">Grupo</th>
-                    <th className="pb-3">Tipo</th>
-                    <th className="pb-3">Usos / Limite</th>
-                    <th className="pb-3">Expira em</th>
-                    <th className="pb-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/10">
-                  {reports?.invitations?.map((inv: any) => (
-                    <tr key={inv.id} className="hover:bg-white/5 transition">
-                      <td className="py-3 font-semibold text-white">{inv.group?.name}</td>
-                      <td className="py-3 text-white/70">{inv.type}</td>
-                      <td className="py-3 text-white/70">
-                        {inv.currentUses} / {inv.maxUses || 'Ilimitado'}
-                      </td>
-                      <td className="py-3 text-white/70">
-                        {inv.expiresAt ? new Date(inv.expiresAt).toLocaleDateString('pt-BR') : 'Sem expiração'}
-                      </td>
-                      <td className="py-3">
-                        {inv.isRevoked ? (
-                          <span className="text-rose-400 font-bold">Revogado</span>
-                        ) : (
-                          <span className="text-emerald-400 font-bold">Ativo</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                <Pagination
+                  currentPage={groupsPage}
+                  totalPages={totalPages}
+                  totalItems={total}
+                  pageSize={groupsPageSize}
+                  onPageChange={(p) => setGroupsPage(p)}
+                  onPageSizeChange={(size) => {
+                    setGroupsPageSize(size);
+                    setGroupsPage(1);
+                  }}
+                  pageSizeOptions={[5, 10, 25]}
+                  itemName="grupos"
+                />
+              </div>
+            );
+          })()}
+
+          {activeReportTab === 'raffles' && (() => {
+            const allRaffles = reports?.participantsByRaffle || [];
+            const total = allRaffles.length;
+            const totalPages = Math.ceil(total / rafflesPageSize) || 1;
+            const paginated = allRaffles.slice(
+              (rafflesPage - 1) * rafflesPageSize,
+              rafflesPage * rafflesPageSize
+            );
+
+            return (
+              <div className="space-y-4">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
+                        <th className="pb-3">Sorteio</th>
+                        <th className="pb-3">Status</th>
+                        <th className="pb-3">Data Prevista</th>
+                        <th className="pb-3">Inscritos</th>
+                        <th className="pb-3">Ganhadores</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {paginated.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-white/40">
+                            Nenhum sorteio encontrado.
+                          </td>
+                        </tr>
+                      ) : (
+                        paginated.map((r: any) => (
+                          <tr key={r.id} className="hover:bg-white/5 transition">
+                            <td className="py-3 font-semibold text-white">{r.title}</td>
+                            <td className="py-3">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-white/80 border border-white/15">
+                                {r.status}
+                              </span>
+                            </td>
+                            <td className="py-3 text-white/70">{new Date(r.drawDateTime).toLocaleDateString('pt-BR')}</td>
+                            <td className="py-3 text-white/70">{r._count?.participants || 0}</td>
+                            <td className="py-3 text-white/70">{r._count?.winners || 0}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <Pagination
+                  currentPage={rafflesPage}
+                  totalPages={totalPages}
+                  totalItems={total}
+                  pageSize={rafflesPageSize}
+                  onPageChange={(p) => setRafflesPage(p)}
+                  onPageSizeChange={(size) => {
+                    setRafflesPageSize(size);
+                    setRafflesPage(1);
+                  }}
+                  pageSizeOptions={[5, 10, 25]}
+                  itemName="sorteios"
+                />
+              </div>
+            );
+          })()}
+
+          {activeReportTab === 'winners' && (() => {
+            const allWinners = reports?.winnersReport || [];
+            const total = allWinners.length;
+            const totalPages = Math.ceil(total / winnersPageSize) || 1;
+            const paginated = allWinners.slice(
+              (winnersPage - 1) * winnersPageSize,
+              winnersPage * winnersPageSize
+            );
+
+            return (
+              <div className="space-y-4">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
+                        <th className="pb-3">Sorteio</th>
+                        <th className="pb-3">Prêmio</th>
+                        <th className="pb-3">Ganhador</th>
+                        <th className="pb-3">CPF Mascarado (LGPD)</th>
+                        <th className="pb-3">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {paginated.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-white/40">
+                            Nenhum ganhador registrado até o momento.
+                          </td>
+                        </tr>
+                      ) : (
+                        paginated.map((w: any) => (
+                          <tr key={w.id} className="hover:bg-white/5 transition">
+                            <td className="py-3 font-semibold text-white">{w.raffle?.title}</td>
+                            <td className="py-3 text-yellow-400 font-bold">{w.raffle?.prize}</td>
+                            <td className="py-3 text-white">{w.user?.name}</td>
+                            <td className="py-3 font-mono text-white/60">{w.user?.cpfMasked}</td>
+                            <td className="py-3">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                {w.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <Pagination
+                  currentPage={winnersPage}
+                  totalPages={totalPages}
+                  totalItems={total}
+                  pageSize={winnersPageSize}
+                  onPageChange={(p) => setWinnersPage(p)}
+                  onPageSizeChange={(size) => {
+                    setWinnersPageSize(size);
+                    setWinnersPage(1);
+                  }}
+                  pageSizeOptions={[5, 10, 25]}
+                  itemName="ganhadores"
+                />
+              </div>
+            );
+          })()}
+
+          {activeReportTab === 'invites' && (() => {
+            const allInvites = reports?.invitations || [];
+            const total = allInvites.length;
+            const totalPages = Math.ceil(total / invitesPageSize) || 1;
+            const paginated = allInvites.slice(
+              (invitesPage - 1) * invitesPageSize,
+              invitesPage * invitesPageSize
+            );
+
+            return (
+              <div className="space-y-4">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-white/10 text-white/40 uppercase text-[10px]">
+                        <th className="pb-3">Grupo</th>
+                        <th className="pb-3">Tipo</th>
+                        <th className="pb-3">Usos / Limite</th>
+                        <th className="pb-3">Expira em</th>
+                        <th className="pb-3">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {paginated.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-white/40">
+                            Nenhum convite emitido.
+                          </td>
+                        </tr>
+                      ) : (
+                        paginated.map((inv: any) => (
+                          <tr key={inv.id} className="hover:bg-white/5 transition">
+                            <td className="py-3 font-semibold text-white">{inv.group?.name}</td>
+                            <td className="py-3 text-white/70">{inv.type}</td>
+                            <td className="py-3 text-white/70">
+                              {inv.currentUses} / {inv.maxUses || 'Ilimitado'}
+                            </td>
+                            <td className="py-3 text-white/70">
+                              {inv.expiresAt ? new Date(inv.expiresAt).toLocaleDateString('pt-BR') : 'Sem expiração'}
+                            </td>
+                            <td className="py-3">
+                              {inv.isRevoked ? (
+                                <span className="text-rose-400 font-bold">Revogado</span>
+                              ) : (
+                                <span className="text-emerald-400 font-bold">Ativo</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <Pagination
+                  currentPage={invitesPage}
+                  totalPages={totalPages}
+                  totalItems={total}
+                  pageSize={invitesPageSize}
+                  onPageChange={(p) => setInvitesPage(p)}
+                  onPageSizeChange={(size) => {
+                    setInvitesPageSize(size);
+                    setInvitesPage(1);
+                  }}
+                  pageSizeOptions={[5, 10, 25]}
+                  itemName="convites"
+                />
+              </div>
+            );
+          })()}
 
           {activeReportTab === 'audit' && (
-            <div className="space-y-3">
-              {reports?.recentAudit?.map((log: any) => (
-                <div key={log.id} className="p-3 bg-white/5 rounded-xl border border-white/10 text-xs flex justify-between items-center">
-                  <div className="space-y-1">
-                    <div className="font-semibold text-white flex items-center space-x-2">
-                      <span className="px-2 py-0.5 rounded bg-yellow-400/20 text-yellow-300 text-[10px] font-bold border border-yellow-400/30">
-                        {log.action}
-                      </span>
-                      <span>{log.entity} #{log.entityId}</span>
-                    </div>
-                    <div className="text-[11px] text-white/60 font-mono">
-                      {log.details || 'Sem detalhes adicionais'}
-                    </div>
-                  </div>
-
-                  <div className="text-[11px] text-white/40">
-                    {new Date(log.createdAt).toLocaleString('pt-BR')}
-                  </div>
+            <div className="space-y-4">
+              {/* Filtros da Trilha de Auditoria */}
+              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pb-2 border-b border-white/10">
+                <div className="flex-1 relative">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                  <input
+                    type="text"
+                    value={auditSearchQuery}
+                    onChange={(e) => setAuditSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && fetchAuditLogs(1, auditPageSize)}
+                    placeholder="Buscar ação, entidade ou detalhes... (Pressione Enter)"
+                    className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white/10 text-white placeholder-white/40"
+                  />
                 </div>
-              ))}
+
+                <div className="flex items-center space-x-2">
+                  <select
+                    value={auditActionFilter}
+                    onChange={(e) => {
+                      setAuditActionFilter(e.target.value);
+                      setAuditPage(1);
+                    }}
+                    className="text-xs px-3 py-2 rounded-xl border border-white/20 bg-slate-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  >
+                    <option value="ALL" className="bg-slate-900 text-white">Todas as Ações</option>
+                    <option value="USER_LOGIN" className="bg-slate-900 text-white">Login de Usuário</option>
+                    <option value="CPF_VALIDATED" className="bg-slate-900 text-white">CPF Validado</option>
+                    <option value="DRAW_EXECUTED" className="bg-slate-900 text-white">Sorteio Executado</option>
+                    <option value="USER_ROLE_UPDATED" className="bg-slate-900 text-white">Papel Alterado</option>
+                    <option value="RAFFLE_CREATED" className="bg-slate-900 text-white">Sorteio Criado</option>
+                    <option value="RAFFLE_PUBLISHED" className="bg-slate-900 text-white">Sorteio Publicado</option>
+                  </select>
+
+                  <button
+                    onClick={() => fetchAuditLogs(1, auditPageSize)}
+                    disabled={auditLoading}
+                    className="p-2 rounded-xl border border-white/20 hover:bg-white/20 text-white transition disabled:opacity-50"
+                    title="Recarregar Auditoria"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${auditLoading ? 'animate-spin' : ''}`} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Lista de Auditoria */}
+              {auditLoading ? (
+                <div className="py-12 text-center text-white/40 text-xs">
+                  Carregando trilha de auditoria...
+                </div>
+              ) : (auditList.length > 0 ? auditList : (reports?.recentAudit || [])).length === 0 ? (
+                <div className="py-12 text-center text-white/40 text-xs">
+                  Nenhum registro de auditoria encontrado.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {(auditList.length > 0 ? auditList : (reports?.recentAudit || [])).map((log: any) => (
+                    <div
+                      key={log.id}
+                      className="p-3.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
+                    >
+                      <div className="space-y-1">
+                        <div className="font-semibold text-white flex flex-wrap items-center gap-2">
+                          <span className="px-2 py-0.5 rounded bg-yellow-400/20 text-yellow-300 text-[10px] font-bold border border-yellow-400/30">
+                            {log.action}
+                          </span>
+                          <span>
+                            {log.entity} #{log.entityId || 'N/A'}
+                          </span>
+                          {log.user && (
+                            <span className="text-[11px] text-white/50">
+                              por <strong className="text-white/80">{log.user.name}</strong> ({log.user.email})
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-white/60 font-mono break-all">
+                          {typeof log.details === 'object'
+                            ? JSON.stringify(log.details)
+                            : log.details || 'Sem detalhes adicionais'}
+                        </div>
+                      </div>
+
+                      <div className="text-[11px] text-white/40 shrink-0 whitespace-nowrap">
+                        {new Date(log.createdAt).toLocaleString('pt-BR')}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Paginação de Auditoria */}
+              <Pagination
+                currentPage={auditPage}
+                totalPages={auditTotalPages}
+                totalItems={auditTotalItems}
+                pageSize={auditPageSize}
+                onPageChange={(newPage) => {
+                  setAuditPage(newPage);
+                  fetchAuditLogs(newPage, auditPageSize);
+                }}
+                onPageSizeChange={(newSize) => {
+                  setAuditPageSize(newSize);
+                  setAuditPage(1);
+                  fetchAuditLogs(1, newSize);
+                }}
+                pageSizeOptions={[10, 25, 50]}
+                itemName="registros de auditoria"
+              />
             </div>
           )}
         </div>
