@@ -217,14 +217,6 @@ export const Navbar: React.FC = () => {
                 </Link>
 
                 <Link
-                  to="/login?type=admin"
-                  className="hidden sm:inline-flex items-center px-3.5 py-2 text-xs font-bold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition whitespace-nowrap"
-                >
-                  <Shield className="w-3.5 h-3.5 mr-1.5 text-purple-300" />
-                  <span>Área Admin</span>
-                </Link>
-
-                <Link
                   to="/login"
                   className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 rounded-xl shadow-md shadow-purple-600/30 transition whitespace-nowrap"
                 >

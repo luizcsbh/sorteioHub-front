@@ -40,7 +40,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={adminOnly ? "/admin/login" : "/login"} replace />;
   }
 
   if (needsProfileCompletion && window.location.pathname !== '/complete-profile') {
@@ -58,6 +58,8 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const isAuthPage =
     location.pathname === '/login' ||
+    location.pathname === '/admin/login' ||
+    location.pathname === '/admin-login' ||
     location.pathname === '/forgot-password' ||
     location.pathname.startsWith('/reset-password') ||
     location.pathname.startsWith('/participar') ||
@@ -76,6 +78,8 @@ const AppContent: React.FC = () => {
         <Routes>
           {/* Rotas Públicas */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin/login" element={<LoginPage isAdminRoute />} />
+          <Route path="/admin-login" element={<LoginPage isAdminRoute />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           <Route path="/participar" element={<ParticipatePage />} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import {
@@ -8,13 +8,12 @@ import {
   Loader2,
   CheckCircle2,
   Gift,
-  Zap,
   Users,
-  Trophy,
   Shield,
   KeyRound,
   ArrowLeft,
   Sparkles,
+  Lock,
 } from 'lucide-react';
 
 // ── Google SDK type ──────────────────────────────────────────────────────────
@@ -33,7 +32,10 @@ declare global {
 }
 
 type Tab = 'login' | 'register';
-type AccountType = 'PARTICIPANT' | 'ADMINISTRATOR';
+
+interface LoginPageProps {
+  isAdminRoute?: boolean;
+}
 
 // ── Password rules ───────────────────────────────────────────────────────────
 const passwordRules = [
@@ -88,7 +90,7 @@ const PasswordInput: React.FC<{
   );
 };
 
-// ── Feature badge ────────────────────────────────────────────────────────────
+// ── Feature item ─────────────────────────────────────────────────────────────
 const FeatureItem: React.FC<{ icon: React.ReactNode; title: string; desc: string }> = ({
   icon,
   title,
@@ -104,21 +106,25 @@ const FeatureItem: React.FC<{ icon: React.ReactNode; title: string; desc: string
 );
 
 // ── Main Login Page Component ────────────────────────────────────────────────
-export const LoginPage: React.FC = () => {
+export const LoginPage: React.FC<LoginPageProps> = ({ isAdminRoute = false }) => {
   const { loginWithGoogle, loginWithEmail, register, isAuthenticated, needsProfileCompletion, user } =
     useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  const initialTab = (searchParams.get('tab') as Tab) || 'login';
-  const initialType: AccountType =
-    searchParams.get('type') === 'admin' || searchParams.get('role') === 'admin'
-      ? 'ADMINISTRATOR'
-      : 'PARTICIPANT';
+  // Verifica se o acesso veio pela rota oculta de administrador
+  const isHiddenAdmin =
+    isAdminRoute ||
+    location.pathname === '/admin/login' ||
+    location.pathname === '/admin-login' ||
+    searchParams.get('admin') === 'true' ||
+    searchParams.get('type') === 'admin' ||
+    searchParams.get('role') === 'admin';
 
+  const initialTab = (searchParams.get('tab') as Tab) || 'login';
   const [tab, setTab] = useState<Tab>(initialTab);
-  const [accountType, setAccountType] = useState<AccountType>(initialType);
   const isInitializedRef = useRef(false);
 
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -150,6 +156,14 @@ export const LoginPage: React.FC = () => {
       }
     }
   }, [isAuthenticated, needsProfileCompletion, user, navigate]);
+
+  const handleBack = () => {
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   const initGoogleAuth = () => {
     if (!window.google?.accounts?.id || !hasRealGoogle || isInitializedRef.current) return;
@@ -188,8 +202,11 @@ export const LoginPage: React.FC = () => {
       }
     }
 
-    // Fallback amigável de teste se a API do Google não responder
-    handleMockLogin('admin@sorteioclub.com.br', 'Administrador Geral');
+    // Fallback amigável se a API do Google não responder
+    handleMockLogin(
+      isHiddenAdmin ? 'admin@sorteioclub.com.br' : 'participante@sorteioclub.com.br',
+      isHiddenAdmin ? 'Administrador Geral' : 'Participante Sorteio'
+    );
   };
 
   const handleMockLogin = async (email: string, name: string) => {
@@ -242,12 +259,12 @@ export const LoginPage: React.FC = () => {
     setRegLoading(true);
     try {
       await register(regName, regEmail, regPassword, regConfirm, {
-        accountType,
+        accountType: isHiddenAdmin ? 'ADMINISTRATOR' : 'PARTICIPANT',
       });
       toast.success(
-        accountType === 'ADMINISTRATOR'
+        isHiddenAdmin
           ? 'Conta de Administrador criada com sucesso!'
-          : 'Conta de Participante criada com sucesso!'
+          : 'Conta criada com sucesso! Seja bem-vindo.'
       );
     } catch (err: any) {
       const detailsMsg = err.response?.data?.details?.[0]?.message;
@@ -262,15 +279,15 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex overflow-hidden relative">
-      {/* ── Background Blobs ─────────────────────────────────────────────── */}
+      {/* ── Background Glows ─────────────────────────────────────────────── */}
       <div className="pointer-events-none absolute -top-32 -left-32 w-96 h-96 rounded-full bg-purple-600/30 blur-3xl" />
       <div className="pointer-events-none absolute top-1/2 -right-24 w-80 h-80 rounded-full bg-indigo-500/20 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 left-1/3 w-72 h-72 rounded-full bg-yellow-500/10 blur-3xl" />
 
-      {/* ── Painel Esquerdo — Apresentação da Plataforma ─────────────────── */}
+      {/* ── Painel Esquerdo — Apresentação da Plataforma (Desktop) ───────── */}
       <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 xl:p-16 relative z-10">
         <div>
-          {/* Logo e Voltar */}
+          {/* Logo e Botão de Voltar Estilizado */}
           <div className="flex items-center justify-between mb-12">
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="w-11 h-11 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/30 group-hover:scale-105 transition">
@@ -279,56 +296,73 @@ export const LoginPage: React.FC = () => {
               <span className="text-white text-2xl font-black tracking-tight">SorteioClub</span>
             </Link>
 
-            <Link
-              to="/"
-              className="inline-flex items-center space-x-1.5 text-xs font-bold text-white/60 hover:text-yellow-400 transition"
+            {/* Botão de Voltar Real com Efeito Glass */}
+            <button
+              type="button"
+              onClick={handleBack}
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs shadow-md backdrop-blur-md transition-all hover:scale-105 active:scale-95 cursor-pointer group"
+              title="Voltar para a página anterior"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Voltar ao Início</span>
-            </Link>
+              <ArrowLeft className="w-4 h-4 text-yellow-400 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Voltar</span>
+            </button>
           </div>
 
-          {/* Hero text */}
+          {/* Hero text do painel esquerdo */}
           <div className="space-y-6">
             <div className="inline-flex items-center space-x-2 bg-yellow-400/15 border border-yellow-400/25 rounded-full px-3.5 py-1.5">
               <Sparkles className="w-4 h-4 text-yellow-400" />
               <span className="text-yellow-300 text-xs font-bold uppercase tracking-wider">
-                Sorteios Digitais & Auditáveis
+                {isHiddenAdmin ? 'Painel de Gestão & Administração' : 'Plataforma Oficial de Sorteios'}
               </span>
             </div>
 
             <h1 className="text-4xl xl:text-5xl font-black text-white leading-tight">
-              A melhor experiência para{' '}
-              <span className="text-yellow-400 bg-gradient-to-r from-yellow-300 to-amber-400 bg-clip-text text-transparent">
-                sorteios privados
-              </span>
+              {isHiddenAdmin ? (
+                <>
+                  Gestão completa e{' '}
+                  <span className="text-purple-400 bg-gradient-to-r from-purple-300 to-indigo-400 bg-clip-text text-transparent">
+                    auditoria de sorteios
+                  </span>
+                </>
+              ) : (
+                <>
+                  Sua chance de{' '}
+                  <span className="text-yellow-400 bg-gradient-to-r from-yellow-300 to-amber-400 bg-clip-text text-transparent">
+                    ganhar prêmios
+                  </span>{' '}
+                  com total segurança
+                </>
+              )}
             </h1>
 
             <p className="text-white/70 text-sm xl:text-base leading-relaxed max-w-md">
-              Gerencie grupos fechados, crie sorteios com regras transparentes e garanta integridade com apuração auditável SHA-256 e conformidade com a LGPD.
+              {isHiddenAdmin
+                ? 'Ambiente restrito de organizadores para gerenciar grupos fechados, cadastrar cotas, automatizar apurações e consultar logs de auditoria criptográfica.'
+                : 'Concorra em grupos privados com garantia de integridade, bilhetes únicos validados e apuração transparente com auditoria criptográfica.'}
             </p>
 
             <div className="space-y-3 pt-3 max-w-md">
               <FeatureItem
-                icon={<Users className="w-5 h-5" />}
-                title="Grupos Fechados & Convites"
-                desc="Gerenciamento exclusivo de participantes com aprovação e links seguros."
+                icon={<Shield className="w-5 h-5 text-emerald-400" />}
+                title="Auditoria Criptográfica SHA-256"
+                desc="Apuração com semente imutável e comprovação pública da lisura do sorteio."
               />
               <FeatureItem
-                icon={<Shield className="w-5 h-5 text-emerald-400" />}
-                title="Motor Criptográfico Auditável"
-                desc="Semente imutável e hash público para verificação independente do resultado."
+                icon={<Users className="w-5 h-5 text-indigo-400" />}
+                title="Grupos Fechados & Exclusivos"
+                desc="Participe ou gerencie comunidades com convites diretos e proteção LGPD."
               />
               <FeatureItem
                 icon={<KeyRound className="w-5 h-5 text-yellow-400" />}
-                title="Acesso Rápido por PIN"
-                desc="Participantes podem entrar diretamente na sala de sorteio com código PIN."
+                title="Participação Simples por PIN"
+                desc="Acesse instantaneamente salas de sorteios digitando seu código PIN."
               />
             </div>
           </div>
         </div>
 
-        {/* Footer do painel esquerdo */}
+        {/* Rodapé do painel esquerdo */}
         <div className="pt-8 border-t border-white/10 flex items-center justify-between text-xs text-white/40">
           <span>© {new Date().getFullYear()} SorteioClub. Todos os direitos reservados.</span>
           <Link to="/legal" className="hover:text-yellow-400 transition">Privacidade & LGPD</Link>
@@ -338,59 +372,88 @@ export const LoginPage: React.FC = () => {
       {/* ── Painel Direito — Formulário de Acesso ────────────────────────── */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-8 relative z-10 overflow-y-auto">
         <div className="w-full max-w-md py-6">
-          {/* Logo Mobile */}
+          {/* Barra Superior Mobile com Logo e Botão de Voltar */}
           <div className="flex lg:hidden items-center justify-between mb-6">
             <Link to="/" className="flex items-center space-x-2.5">
-              <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center shadow-md">
+              <div className="w-9 h-9 rounded-xl bg-yellow-400 flex items-center justify-center shadow-md">
                 <Gift className="w-5 h-5 text-slate-950" />
               </div>
-              <span className="text-white text-xl font-black">SorteioClub</span>
+              <span className="text-white text-lg font-black">SorteioClub</span>
             </Link>
 
-            <Link
-              to="/"
-              className="text-xs font-bold text-white/60 hover:text-yellow-400 transition flex items-center space-x-1"
+            {/* Botão de Voltar Mobile */}
+            <button
+              type="button"
+              onClick={handleBack}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs shadow-sm transition active:scale-95 cursor-pointer"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Início</span>
-            </Link>
+              <ArrowLeft className="w-3.5 h-3.5 text-yellow-400" />
+              <span>Voltar</span>
+            </button>
           </div>
 
           {/* Card Principal */}
           <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/50 space-y-6">
-            
-            {/* 🎯 Banner Kahoot Style — Acesso Direto com PIN para Participantes */}
-            <div className="bg-gradient-to-r from-yellow-400/15 via-amber-400/10 to-yellow-400/5 border border-yellow-400/30 rounded-2xl p-4 flex items-center justify-between gap-3">
-              <div className="space-y-0.5">
-                <div className="flex items-center space-x-1.5 text-yellow-300 text-xs font-bold">
-                  <KeyRound className="w-4 h-4 text-yellow-400 shrink-0" />
-                  <span>Tem um PIN de Sorteio?</span>
+
+            {/* Se for ROTA OCULTA DE ADMIN: exibe badge de segurança administrativa */}
+            {isHiddenAdmin ? (
+              <div className="bg-purple-950/60 border border-purple-400/40 rounded-2xl p-4 flex items-center space-x-3 shadow-inner">
+                <div className="w-10 h-10 rounded-xl bg-purple-600/30 border border-purple-400/40 flex items-center justify-center text-purple-300 shrink-0">
+                  <Lock className="w-5 h-5" />
                 </div>
-                <p className="text-[11px] text-white/60">
-                  Entre direto na sala do sorteio sem precisar logar agora.
-                </p>
+                <div>
+                  <div className="text-xs font-black uppercase tracking-wider text-purple-300">
+                    Acesso Administrativo Restrito
+                  </div>
+                  <div className="text-[11px] text-white/60 mt-0.5">
+                    Área restrita a gestores e organizadores de sorteios.
+                  </div>
+                </div>
               </div>
-              <Link
-                to="/participar"
-                className="px-3 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-950 text-xs font-black rounded-xl transition shadow-md shadow-yellow-400/20 whitespace-nowrap shrink-0"
-              >
-                Digitar PIN &rarr;
-              </Link>
-            </div>
+            ) : (
+              /* Se for ROTA PÚBLICA NORMAL: Banner de PIN estilo Kahoot para participantes */
+              <div className="bg-gradient-to-r from-yellow-400/15 via-amber-400/10 to-yellow-400/5 border border-yellow-400/30 rounded-2xl p-4 flex items-center justify-between gap-3">
+                <div className="space-y-0.5">
+                  <div className="flex items-center space-x-1.5 text-yellow-300 text-xs font-bold">
+                    <KeyRound className="w-4 h-4 text-yellow-400 shrink-0" />
+                    <span>Tem um PIN de Sorteio?</span>
+                  </div>
+                  <p className="text-[11px] text-white/60">
+                    Entre direto na sala do sorteio sem precisar de cadastro prévio.
+                  </p>
+                </div>
+                <Link
+                  to="/participar"
+                  className="px-3.5 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-950 text-xs font-black rounded-xl transition shadow-md shadow-yellow-400/20 whitespace-nowrap shrink-0"
+                >
+                  Digitar PIN &rarr;
+                </Link>
+              </div>
+            )}
 
             {/* Cabeçalho do Card */}
             <div className="text-center space-y-1">
               <h2 className="text-2xl font-black text-white">
-                {tab === 'login' ? 'Bem-vindo de volta! 👋' : 'Criar sua Conta 🎉'}
+                {isHiddenAdmin
+                  ? tab === 'login'
+                    ? 'Login de Administrador 👑'
+                    : 'Cadastro de Organizador 👑'
+                  : tab === 'login'
+                  ? 'Bem-vindo de volta! 👋'
+                  : 'Criar sua Conta 🎉'}
               </h2>
               <p className="text-white/50 text-xs sm:text-sm">
-                {tab === 'login'
-                  ? 'Acesse sua conta para participar ou gerenciar sorteios'
-                  : 'Cadastre-se para aproveitar todos os recursos'}
+                {isHiddenAdmin
+                  ? tab === 'login'
+                    ? 'Informe suas credenciais para acessar o painel de gestão'
+                    : 'Cadastre sua conta para criar grupos e organizar sorteios'
+                  : tab === 'login'
+                  ? 'Acesse sua conta para conferir seus bilhetes e prêmios'
+                  : 'Preencha seus dados para começar a concorrer gratuitamente'}
               </p>
             </div>
 
-            {/* Botão Google Oficial */}
+            {/* Botão Oficial do Google */}
             <div>
               <button
                 type="button"
@@ -516,7 +579,9 @@ export const LoginPage: React.FC = () => {
                       <span>Entrando...</span>
                     </>
                   ) : (
-                    <span>Entrar na Plataforma</span>
+                    <span>
+                      {isHiddenAdmin ? 'Entrar como Administrador' : 'Entrar na Plataforma'}
+                    </span>
                   )}
                 </button>
               </form>
@@ -525,50 +590,6 @@ export const LoginPage: React.FC = () => {
             {/* ── Formulário de Cadastro ──────────────────────────────────── */}
             {tab === 'register' && (
               <form onSubmit={handleRegister} className="space-y-4">
-                {/* Seletor do Tipo de Conta no Cadastro */}
-                <div>
-                  <label className="block text-white/70 text-xs font-semibold mb-2">
-                    Tipo de conta desejado:
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setAccountType('PARTICIPANT')}
-                      className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-                        accountType === 'PARTICIPANT'
-                          ? 'bg-yellow-400/20 border-yellow-400 text-white'
-                          : 'bg-white/5 border-white/10 text-white/60 hover:text-white'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-1.5">
-                        <Users className="w-4 h-4 text-yellow-400" />
-                        <span className="text-xs font-bold text-white">Participante</span>
-                      </div>
-                      <p className="text-[10px] text-white/50 mt-1 leading-tight">
-                        Concorrer em sorteios e receber prêmios
-                      </p>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setAccountType('ADMINISTRATOR')}
-                      className={`p-3 rounded-xl border text-left transition cursor-pointer ${
-                        accountType === 'ADMINISTRATOR'
-                          ? 'bg-purple-600/30 border-purple-400 text-white'
-                          : 'bg-white/5 border-white/10 text-white/60 hover:text-white'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-1.5">
-                        <Shield className="w-4 h-4 text-purple-300" />
-                        <span className="text-xs font-bold text-white">Organizador</span>
-                      </div>
-                      <p className="text-[10px] text-white/50 mt-1 leading-tight">
-                        Criar grupos, sorteios e gerenciar listas
-                      </p>
-                    </button>
-                  </div>
-                </div>
-
                 <div>
                   <label className="block text-white/70 text-xs font-semibold mb-1.5">
                     Nome completo
@@ -665,8 +686,8 @@ export const LoginPage: React.FC = () => {
                     </>
                   ) : (
                     <span>
-                      {accountType === 'ADMINISTRATOR'
-                        ? 'Criar Conta de Organizador 👑'
+                      {isHiddenAdmin
+                        ? 'Criar Conta de Administrador 👑'
                         : 'Criar Minha Conta Grátis 🎉'}
                     </span>
                   )}
