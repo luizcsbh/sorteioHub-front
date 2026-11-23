@@ -18,6 +18,7 @@ import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { CampaignsPage } from './pages/admin/CampaignsPage';
 import { TermsAndPrivacyPage } from './pages/legal/TermsAndPrivacyPage';
 import { ParticipatePage } from './pages/raffles/ParticipatePage';
+import { HomePage } from './pages/home/HomePage';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 
@@ -93,15 +94,10 @@ const AppContent: React.FC = () => {
             }
           />
 
+          {/* Página Inicial Pública */}
+          <Route path="/" element={<HomePage />} />
+
           {/* Painel do Participante */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/dashboard"
             element={
