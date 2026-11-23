@@ -173,31 +173,17 @@ export const Navbar: React.FC = () => {
                 <Link
                   to="/profile"
                   onClick={closeMenu}
-                  className="flex items-center space-x-2 sm:space-x-3 p-1.5 rounded-xl hover:bg-white/10 transition group cursor-pointer shrink-0"
+                  className="p-1 rounded-xl hover:bg-white/10 transition group cursor-pointer shrink-0"
                   title="Acessar meu perfil e configurações"
                 >
-                  <div className="hidden xl:flex flex-col text-right">
-                    <span className="text-xs xl:text-sm font-bold text-white group-hover:text-yellow-400 transition truncate max-w-[140px]">
-                      {user.name}
-                    </span>
-                    <div className="flex items-center justify-end space-x-1 text-xs">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-white/10 text-white/80 border border-white/15">
-                        {roleLabel[user.role]}
-                      </span>
-                      {user.cpfMasked && (
-                        <span className="text-[11px] text-white/40">CPF: {user.cpfMasked}</span>
-                      )}
-                    </div>
-                  </div>
-
                   {user.avatarUrl ? (
                     <img
                       src={user.avatarUrl}
                       alt={user.name}
-                      className="w-9 h-9 rounded-full ring-2 ring-yellow-400/50 object-cover shrink-0"
+                      className="w-9 h-9 rounded-full ring-2 ring-yellow-400/50 object-cover shrink-0 group-hover:ring-yellow-400 transition"
                     />
                   ) : (
-                    <div className="w-9 h-9 rounded-full bg-yellow-400 text-slate-950 flex items-center justify-center font-black text-sm shadow-md shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-yellow-400 text-slate-950 flex items-center justify-center font-black text-sm shadow-md shrink-0 group-hover:bg-yellow-300 transition">
                       {user.name.charAt(0).toUpperCase()}
                     </div>
                   )}
