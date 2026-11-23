@@ -13,6 +13,7 @@ import {
   Trophy,
   Shield,
   KeyRound,
+  ArrowLeft,
   Sparkles,
 } from 'lucide-react';
 
@@ -32,6 +33,7 @@ declare global {
 }
 
 type Tab = 'login' | 'register';
+type AccountType = 'PARTICIPANT' | 'ADMINISTRATOR';
 
 // ── Password rules ───────────────────────────────────────────────────────────
 const passwordRules = [
@@ -42,7 +44,7 @@ const passwordRules = [
   { label: '1 caractere especial', test: (v: string) => /[^A-Za-z0-9]/.test(v) },
 ];
 
-// ── Password input ───────────────────────────────────────────────────────────
+// ── Password input component ──────────────────────────────────────────────────
 const PasswordInput: React.FC<{
   value: string;
   onChange: (v: string) => void;
@@ -78,7 +80,7 @@ const PasswordInput: React.FC<{
         type="button"
         tabIndex={-1}
         onClick={() => setShow((s) => !s)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition cursor-pointer"
       >
         {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
       </button>
@@ -87,16 +89,21 @@ const PasswordInput: React.FC<{
 };
 
 // ── Feature badge ────────────────────────────────────────────────────────────
-const Feature: React.FC<{ icon: React.ReactNode; color: string; text: string }> = ({
-  icon, color, text,
+const FeatureItem: React.FC<{ icon: React.ReactNode; title: string; desc: string }> = ({
+  icon,
+  title,
+  desc,
 }) => (
-  <div className={`flex items-center space-x-3 p-3 rounded-2xl ${color}`}>
-    <div className="flex-shrink-0">{icon}</div>
-    <span className="text-white text-sm font-semibold">{text}</span>
+  <div className="flex items-start space-x-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+    <div className="p-2 rounded-xl bg-white/10 text-yellow-400 shrink-0 mt-0.5">{icon}</div>
+    <div>
+      <div className="text-white text-sm font-bold">{title}</div>
+      <div className="text-white/60 text-xs mt-0.5 leading-relaxed">{desc}</div>
+    </div>
   </div>
 );
 
-// ── Main component ───────────────────────────────────────────────────────────
+// ── Main Login Page Component ────────────────────────────────────────────────
 export const LoginPage: React.FC = () => {
   const { loginWithGoogle, loginWithEmail, register, isAuthenticated, needsProfileCompletion, user } =
     useAuth();
@@ -104,24 +111,25 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const initialMode =
-    searchParams.get('type') === 'admin' || searchParams.get('role') === 'admin'
-      ? 'admin'
-      : 'participant';
   const initialTab = (searchParams.get('tab') as Tab) || 'login';
+  const initialType: AccountType =
+    searchParams.get('type') === 'admin' || searchParams.get('role') === 'admin'
+      ? 'ADMINISTRATOR'
+      : 'PARTICIPANT';
 
-  const [accountMode, setAccountMode] = useState<'participant' | 'admin'>(initialMode);
   const [tab, setTab] = useState<Tab>(initialTab);
+  const [accountType, setAccountType] = useState<AccountType>(initialType);
   const isInitializedRef = useRef(false);
+
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
   const hasRealGoogle = !!GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.includes('cole_seu');
 
-  // Login state
+  // Login form state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
 
-  // Register state
+  // Register form state
   const [regName, setRegName] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -143,7 +151,6 @@ export const LoginPage: React.FC = () => {
     }
   }, [isAuthenticated, needsProfileCompletion, user, navigate]);
 
-  // Inicializa o Google Identity de forma silenciosa para quando o usuário clicar no botão
   const initGoogleAuth = () => {
     if (!window.google?.accounts?.id || !hasRealGoogle || isInitializedRef.current) return;
     try {
@@ -181,7 +188,7 @@ export const LoginPage: React.FC = () => {
       }
     }
 
-    // Fallback amigável se a API externa do Google não estiver acessível
+    // Fallback amigável de teste se a API do Google não responder
     handleMockLogin('admin@sorteioclub.com.br', 'Administrador Geral');
   };
 
@@ -204,7 +211,7 @@ export const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!loginEmail || !loginPassword) {
-      toast.warning('Preencha e-mail e senha.');
+      toast.warning('Preencha seu e-mail e senha.');
       return;
     }
     setLoginLoading(true);
@@ -220,25 +227,25 @@ export const LoginPage: React.FC = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!regName || !regEmail || !regPassword || !regConfirm) {
-      toast.warning('Preencha todos os campos.');
+      toast.warning('Preencha todos os campos do cadastro.');
       return;
     }
     if (regPassword !== regConfirm) {
-      toast.error('As senhas não coincidem.');
+      toast.error('As senhas digitadas não coincidem.');
       return;
     }
-    const failed = passwordRules.find((r) => !r.test(regPassword));
-    if (failed) {
-      toast.error(`Senha fraca: ${failed.label}`);
+    const failedRule = passwordRules.find((r) => !r.test(regPassword));
+    if (failedRule) {
+      toast.error(`Requisito de senha não atendido: ${failedRule.label}`);
       return;
     }
     setRegLoading(true);
     try {
       await register(regName, regEmail, regPassword, regConfirm, {
-        accountType: accountMode === 'admin' ? 'ADMINISTRATOR' : 'PARTICIPANT',
+        accountType,
       });
       toast.success(
-        accountMode === 'admin'
+        accountType === 'ADMINISTRATOR'
           ? 'Conta de Administrador criada com sucesso!'
           : 'Conta de Participante criada com sucesso!'
       );
@@ -255,142 +262,141 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex overflow-hidden relative">
-      {/* ── Decorative blobs ───────────────────────────────────────────────── */}
+      {/* ── Background Blobs ─────────────────────────────────────────────── */}
       <div className="pointer-events-none absolute -top-32 -left-32 w-96 h-96 rounded-full bg-purple-600/30 blur-3xl" />
       <div className="pointer-events-none absolute top-1/2 -right-24 w-80 h-80 rounded-full bg-indigo-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 left-1/3 w-72 h-72 rounded-full bg-violet-700/30 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 left-1/3 w-72 h-72 rounded-full bg-yellow-500/10 blur-3xl" />
 
-      {/* ── Left panel — branding ────────────────────────────────────────── */}
-      <div className="hidden lg:flex flex-col justify-between w-1/2 p-14 relative z-10">
-        {/* Logo */}
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/30">
-            <Gift className="w-7 h-7 text-slate-950" />
+      {/* ── Painel Esquerdo — Apresentação da Plataforma ─────────────────── */}
+      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 xl:p-16 relative z-10">
+        <div>
+          {/* Logo e Voltar */}
+          <div className="flex items-center justify-between mb-12">
+            <Link to="/" className="flex items-center space-x-3 group">
+              <div className="w-11 h-11 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/30 group-hover:scale-105 transition">
+                <Gift className="w-6 h-6 text-slate-950" />
+              </div>
+              <span className="text-white text-2xl font-black tracking-tight">SorteioClub</span>
+            </Link>
+
+            <Link
+              to="/"
+              className="inline-flex items-center space-x-1.5 text-xs font-bold text-white/60 hover:text-yellow-400 transition"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Voltar ao Início</span>
+            </Link>
           </div>
-          <span className="text-white text-2xl font-black tracking-tight">SorteioClub</span>
+
+          {/* Hero text */}
+          <div className="space-y-6">
+            <div className="inline-flex items-center space-x-2 bg-yellow-400/15 border border-yellow-400/25 rounded-full px-3.5 py-1.5">
+              <Sparkles className="w-4 h-4 text-yellow-400" />
+              <span className="text-yellow-300 text-xs font-bold uppercase tracking-wider">
+                Sorteios Digitais & Auditáveis
+              </span>
+            </div>
+
+            <h1 className="text-4xl xl:text-5xl font-black text-white leading-tight">
+              A melhor experiência para{' '}
+              <span className="text-yellow-400 bg-gradient-to-r from-yellow-300 to-amber-400 bg-clip-text text-transparent">
+                sorteios privados
+              </span>
+            </h1>
+
+            <p className="text-white/70 text-sm xl:text-base leading-relaxed max-w-md">
+              Gerencie grupos fechados, crie sorteios com regras transparentes e garanta integridade com apuração auditável SHA-256 e conformidade com a LGPD.
+            </p>
+
+            <div className="space-y-3 pt-3 max-w-md">
+              <FeatureItem
+                icon={<Users className="w-5 h-5" />}
+                title="Grupos Fechados & Convites"
+                desc="Gerenciamento exclusivo de participantes com aprovação e links seguros."
+              />
+              <FeatureItem
+                icon={<Shield className="w-5 h-5 text-emerald-400" />}
+                title="Motor Criptográfico Auditável"
+                desc="Semente imutável e hash público para verificação independente do resultado."
+              />
+              <FeatureItem
+                icon={<KeyRound className="w-5 h-5 text-yellow-400" />}
+                title="Acesso Rápido por PIN"
+                desc="Participantes podem entrar diretamente na sala de sorteio com código PIN."
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Hero text */}
-        <div className="space-y-6">
-          <div className="inline-flex items-center space-x-2 bg-yellow-400/20 border border-yellow-400/30 rounded-full px-4 py-1.5">
-            <Zap className="w-4 h-4 text-yellow-400" />
-            <span className="text-yellow-300 text-xs font-bold uppercase tracking-widest">
-              Plataforma de Sorteios
-            </span>
-          </div>
-
-          <h1 className="text-5xl font-black text-white leading-tight">
-            Sorteios<br />
-            <span className="text-yellow-400">privados</span><br />
-            para grupos<br />fechados
-          </h1>
-
-          <p className="text-white/60 text-base leading-relaxed max-w-sm">
-            Crie sorteios, gerencie grupos e garanta transparência com tecnologia de ponta. LGPD compliant.
-          </p>
-
-          <div className="space-y-3 pt-2">
-            <Feature
-              color="bg-violet-600/40"
-              icon={<Users className="w-5 h-5 text-violet-300" />}
-              text="Grupos privados com convites por e-mail"
-            />
-            <Feature
-              color="bg-indigo-600/40"
-              icon={<Trophy className="w-5 h-5 text-indigo-300" />}
-              text="Sorteios auditáveis e 100% transparentes"
-            />
-            <Feature
-              color="bg-pink-600/40"
-              icon={<Zap className="w-5 h-5 text-pink-300" />}
-              text="Resultado instantâneo com histórico completo"
-            />
-          </div>
+        {/* Footer do painel esquerdo */}
+        <div className="pt-8 border-t border-white/10 flex items-center justify-between text-xs text-white/40">
+          <span>© {new Date().getFullYear()} SorteioClub. Todos os direitos reservados.</span>
+          <Link to="/legal" className="hover:text-yellow-400 transition">Privacidade & LGPD</Link>
         </div>
-
-        {/* Footer */}
-        <p className="text-white/30 text-xs">
-          © 2026 SorteioClub · Todos os direitos reservados
-        </p>
       </div>
 
-      {/* ── Right panel — form ───────────────────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center p-6 relative z-10">
-        <div className="w-full max-w-md">
+      {/* ── Painel Direito — Formulário de Acesso ────────────────────────── */}
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 relative z-10 overflow-y-auto">
+        <div className="w-full max-w-md py-6">
+          {/* Logo Mobile */}
+          <div className="flex lg:hidden items-center justify-between mb-6">
+            <Link to="/" className="flex items-center space-x-2.5">
+              <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center shadow-md">
+                <Gift className="w-5 h-5 text-slate-950" />
+              </div>
+              <span className="text-white text-xl font-black">SorteioClub</span>
+            </Link>
 
-          {/* Mobile logo */}
-          <div className="flex lg:hidden items-center justify-center space-x-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center">
-              <Gift className="w-6 h-6 text-slate-950" />
-            </div>
-            <span className="text-white text-xl font-black">SorteioClub</span>
+            <Link
+              to="/"
+              className="text-xs font-bold text-white/60 hover:text-yellow-400 transition flex items-center space-x-1"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Início</span>
+            </Link>
           </div>
 
-          {/* Card */}
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl shadow-black/40">
-
-            {/* Seletor de Modo: Participante vs Administrador */}
-            <div className="flex bg-black/25 p-1 rounded-2xl mb-6 border border-white/10">
-              <button
-                type="button"
-                onClick={() => setAccountMode('participant')}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${
-                  accountMode === 'participant'
-                    ? 'bg-yellow-400 text-slate-950 shadow-lg shadow-yellow-400/20'
-                    : 'text-white/60 hover:text-white'
-                }`}
+          {/* Card Principal */}
+          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/50 space-y-6">
+            
+            {/* 🎯 Banner Kahoot Style — Acesso Direto com PIN para Participantes */}
+            <div className="bg-gradient-to-r from-yellow-400/15 via-amber-400/10 to-yellow-400/5 border border-yellow-400/30 rounded-2xl p-4 flex items-center justify-between gap-3">
+              <div className="space-y-0.5">
+                <div className="flex items-center space-x-1.5 text-yellow-300 text-xs font-bold">
+                  <KeyRound className="w-4 h-4 text-yellow-400 shrink-0" />
+                  <span>Tem um PIN de Sorteio?</span>
+                </div>
+                <p className="text-[11px] text-white/60">
+                  Entre direto na sala do sorteio sem precisar logar agora.
+                </p>
+              </div>
+              <Link
+                to="/participar"
+                className="px-3 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-950 text-xs font-black rounded-xl transition shadow-md shadow-yellow-400/20 whitespace-nowrap shrink-0"
               >
-                <span>🎮 Sou Participante</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setAccountMode('admin')}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${
-                  accountMode === 'admin'
-                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                <span>👑 Sou Administrador</span>
-              </button>
+                Digitar PIN &rarr;
+              </Link>
             </div>
 
-            {/* Heading */}
-            <div className="text-center mb-6">
-              {accountMode === 'admin' && (
-                <div className="inline-flex items-center space-x-1 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-200 text-[11px] font-bold mb-2">
-                  <Shield className="w-3.5 h-3.5 text-purple-300" />
-                  <span>Área do Organizador / Administrador</span>
-                </div>
-              )}
+            {/* Cabeçalho do Card */}
+            <div className="text-center space-y-1">
               <h2 className="text-2xl font-black text-white">
-                {accountMode === 'admin'
-                  ? tab === 'login'
-                    ? 'Painel do Administrador 👑'
-                    : 'Criar Conta de Administrador 👑'
-                  : tab === 'login'
-                  ? 'Bem-vindo de volta! 👋'
-                  : 'Criar sua conta 🎉'}
+                {tab === 'login' ? 'Bem-vindo de volta! 👋' : 'Criar sua Conta 🎉'}
               </h2>
-              <p className="text-white/50 text-xs sm:text-sm mt-1">
-                {accountMode === 'admin'
-                  ? tab === 'login'
-                    ? 'Acesse para gerenciar seus grupos e sorteios'
-                    : 'Cadastre-se para criar e auditar sorteios oficiais'
-                  : tab === 'login'
-                  ? 'Entre para concorrer aos prêmios dos seus sorteios'
-                  : 'Junte-se à plataforma gratuitamente'}
+              <p className="text-white/50 text-xs sm:text-sm">
+                {tab === 'login'
+                  ? 'Acesse sua conta para participar ou gerenciar sorteios'
+                  : 'Cadastre-se para aproveitar todos os recursos'}
               </p>
             </div>
 
-            {/* Google button nativo sem iframe externo (elimina o erro 403) */}
-            <div className="mb-5">
+            {/* Botão Google Oficial */}
+            <div>
               <button
                 type="button"
                 onClick={handleGoogleClick}
                 disabled={googleLoading}
-                className="w-full flex items-center justify-center space-x-3 py-3 px-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl shadow-sm transition disabled:opacity-60 cursor-pointer"
+                className="w-full flex items-center justify-center space-x-3 py-3 px-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl shadow-md transition disabled:opacity-60 cursor-pointer text-sm"
               >
                 {googleLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin text-slate-600" />
@@ -418,233 +424,275 @@ export const LoginPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Divider */}
-            <div className="relative flex items-center mb-5">
+            {/* Divisor */}
+            <div className="relative flex items-center">
               <div className="flex-grow border-t border-white/15" />
-              <span className="mx-3 text-white/35 text-xs font-semibold uppercase tracking-widest">ou</span>
+              <span className="mx-3 text-white/35 text-xs font-semibold uppercase tracking-wider">
+                ou com e-mail
+              </span>
               <div className="flex-grow border-t border-white/15" />
             </div>
 
-            {/* Tabs */}
-            <div className="flex bg-white/5 rounded-2xl p-1 mb-6 gap-1">
-              {(['login', 'register'] as Tab[]).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setTab(t)}
-                  className={`flex-1 py-2 text-sm font-bold rounded-xl transition ${
-                    tab === t
-                      ? 'bg-yellow-400 text-slate-950 shadow'
-                      : 'text-white/50 hover:text-white'
-                  }`}
-                >
-                  {t === 'login' ? 'Entrar' : 'Criar Conta'}
-                </button>
-              ))}
+            {/* Alternador de Abas: Entrar vs Criar Conta */}
+            <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/10">
+              <button
+                type="button"
+                onClick={() => setTab('login')}
+                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition cursor-pointer ${
+                  tab === 'login'
+                    ? 'bg-yellow-400 text-slate-950 shadow-md'
+                    : 'text-white/60 hover:text-white'
+                }`}
+              >
+                Fazer Login
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTab('register')}
+                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition cursor-pointer ${
+                  tab === 'register'
+                    ? 'bg-yellow-400 text-slate-950 shadow-md'
+                    : 'text-white/60 hover:text-white'
+                }`}
+              >
+                Criar Nova Conta
+              </button>
             </div>
 
-            {/* ── Login form ── */}
+            {/* ── Formulário de Login ──────────────────────────────────────── */}
             {tab === 'login' && (
               <form onSubmit={handleLogin} className="space-y-4">
-                <input
-                  id="login-email"
-                  name="email"
-                  type="email"
-                  autoComplete="username"
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="Seu e-mail"
-                  disabled={loginLoading}
-                  className={inputCls}
-                />
-                <PasswordInput
-                  id="login-password"
-                  name="password"
-                  autoComplete="current-password"
-                  value={loginPassword}
-                  onChange={setLoginPassword}
-                  placeholder="Sua senha"
-                  disabled={loginLoading}
-                />
-                <div className="text-right -mt-2">
+                <div>
+                  <label className="block text-white/70 text-xs font-semibold mb-1.5">
+                    Seu e-mail
+                  </label>
+                  <input
+                    id="login-email"
+                    name="email"
+                    type="email"
+                    autoComplete="username"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder="ex: seu@email.com"
+                    disabled={loginLoading}
+                    className={inputCls}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-white/70 text-xs font-semibold mb-1.5">
+                    Sua senha
+                  </label>
+                  <PasswordInput
+                    id="login-password"
+                    name="password"
+                    autoComplete="current-password"
+                    value={loginPassword}
+                    onChange={setLoginPassword}
+                    placeholder="Digite sua senha"
+                    disabled={loginLoading}
+                  />
+                </div>
+
+                {/* Esqueceu a Senha */}
+                <div className="text-right -mt-1">
                   <Link
                     to="/forgot-password"
-                    className="text-xs text-white/50 hover:text-yellow-400 transition-colors"
+                    className="text-xs text-white/50 hover:text-yellow-400 transition"
                   >
-                    Esqueceu a senha?
+                    Esqueceu sua senha?
                   </Link>
                 </div>
+
                 <button
                   type="submit"
                   disabled={loginLoading}
-                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-base rounded-xl shadow-lg shadow-yellow-400/25 transition disabled:opacity-60 flex items-center justify-center space-x-2"
+                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-sm sm:text-base rounded-xl shadow-lg shadow-yellow-400/20 transition disabled:opacity-60 flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   {loginLoading ? (
-                    <><Loader2 className="w-5 h-5 animate-spin" /><span>Entrando…</span></>
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Entrando...</span>
+                    </>
                   ) : (
-                    <span>Entrar agora</span>
+                    <span>Entrar na Plataforma</span>
                   )}
                 </button>
               </form>
             )}
 
-            {/* ── Register form ── */}
+            {/* ── Formulário de Cadastro ──────────────────────────────────── */}
             {tab === 'register' && (
-              <form onSubmit={handleRegister} className="space-y-3">
-                <input
-                  id="reg-name"
-                  name="name"
-                  type="text"
-                  autoComplete="name"
-                  value={regName}
-                  onChange={(e) => setRegName(e.target.value)}
-                  placeholder="Nome completo"
-                  disabled={regLoading}
-                  className={inputCls}
-                />
-                <input
-                  id="reg-email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
-                  placeholder="Seu e-mail"
-                  disabled={regLoading}
-                  className={inputCls}
-                />
-                <PasswordInput
-                  id="reg-password"
-                  name="password"
-                  autoComplete="new-password"
-                  value={regPassword}
-                  onChange={setRegPassword}
-                  placeholder="Crie uma senha"
-                  disabled={regLoading}
-                />
+              <form onSubmit={handleRegister} className="space-y-4">
+                {/* Seletor do Tipo de Conta no Cadastro */}
+                <div>
+                  <label className="block text-white/70 text-xs font-semibold mb-2">
+                    Tipo de conta desejado:
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAccountType('PARTICIPANT')}
+                      className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                        accountType === 'PARTICIPANT'
+                          ? 'bg-yellow-400/20 border-yellow-400 text-white'
+                          : 'bg-white/5 border-white/10 text-white/60 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-1.5">
+                        <Users className="w-4 h-4 text-yellow-400" />
+                        <span className="text-xs font-bold text-white">Participante</span>
+                      </div>
+                      <p className="text-[10px] text-white/50 mt-1 leading-tight">
+                        Concorrer em sorteios e receber prêmios
+                      </p>
+                    </button>
 
-                {/* Password requirements */}
-                {regPassword.length > 0 && (
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 px-1">
-                    {passwordRules.map((r) => (
-                      <span
-                        key={r.label}
-                        className={`flex items-center space-x-1 text-[11px] font-medium transition ${
-                          r.test(regPassword) ? 'text-emerald-400' : 'text-white/35'
-                        }`}
-                      >
-                        <CheckCircle2 className="w-3 h-3" />
-                        <span>{r.label}</span>
-                      </span>
-                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setAccountType('ADMINISTRATOR')}
+                      className={`p-3 rounded-xl border text-left transition cursor-pointer ${
+                        accountType === 'ADMINISTRATOR'
+                          ? 'bg-purple-600/30 border-purple-400 text-white'
+                          : 'bg-white/5 border-white/10 text-white/60 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-1.5">
+                        <Shield className="w-4 h-4 text-purple-300" />
+                        <span className="text-xs font-bold text-white">Organizador</span>
+                      </div>
+                      <p className="text-[10px] text-white/50 mt-1 leading-tight">
+                        Criar grupos, sorteios e gerenciar listas
+                      </p>
+                    </button>
                   </div>
-                )}
+                </div>
 
-                <PasswordInput
-                  id="reg-confirm"
-                  name="confirmPassword"
-                  autoComplete="new-password"
-                  value={regConfirm}
-                  onChange={setRegConfirm}
-                  placeholder="Confirmar senha"
-                  disabled={regLoading}
-                />
-                {regConfirm.length > 0 && regPassword !== regConfirm && (
-                  <p className="text-[11px] text-rose-400 px-1">As senhas não coincidem.</p>
-                )}
+                <div>
+                  <label className="block text-white/70 text-xs font-semibold mb-1.5">
+                    Nome completo
+                  </label>
+                  <input
+                    id="reg-name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    value={regName}
+                    onChange={(e) => setRegName(e.target.value)}
+                    placeholder="Seu nome completo"
+                    disabled={regLoading}
+                    className={inputCls}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-white/70 text-xs font-semibold mb-1.5">
+                    E-mail oficial
+                  </label>
+                  <input
+                    id="reg-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                    placeholder="ex: seu@email.com"
+                    disabled={regLoading}
+                    className={inputCls}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-white/70 text-xs font-semibold mb-1.5">
+                    Criar senha segura
+                  </label>
+                  <PasswordInput
+                    id="reg-password"
+                    name="password"
+                    autoComplete="new-password"
+                    value={regPassword}
+                    onChange={setRegPassword}
+                    placeholder="Crie sua senha"
+                    disabled={regLoading}
+                  />
+
+                  {/* Validações visuais */}
+                  {regPassword.length > 0 && (
+                    <div className="grid grid-cols-2 gap-1.5 pt-2 px-1">
+                      {passwordRules.map((r) => (
+                        <div
+                          key={r.label}
+                          className={`flex items-center space-x-1.5 text-[10px] font-medium transition ${
+                            r.test(regPassword) ? 'text-emerald-400' : 'text-white/35'
+                          }`}
+                        >
+                          <CheckCircle2 className="w-3 h-3 shrink-0" />
+                          <span>{r.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-white/70 text-xs font-semibold mb-1.5">
+                    Confirmar senha
+                  </label>
+                  <PasswordInput
+                    id="reg-confirm"
+                    name="confirmPassword"
+                    autoComplete="new-password"
+                    value={regConfirm}
+                    onChange={setRegConfirm}
+                    placeholder="Repita a senha criada"
+                    disabled={regLoading}
+                  />
+                  {regConfirm.length > 0 && regPassword !== regConfirm && (
+                    <p className="text-[11px] text-rose-400 pt-1 px-1">As senhas não coincidem.</p>
+                  )}
+                </div>
 
                 <button
                   type="submit"
                   disabled={regLoading}
-                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-base rounded-xl shadow-lg shadow-yellow-400/25 transition disabled:opacity-60 flex items-center justify-center space-x-2 !mt-5 cursor-pointer"
+                  className="w-full py-3.5 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-sm sm:text-base rounded-xl shadow-lg shadow-yellow-400/20 transition disabled:opacity-60 flex items-center justify-center space-x-2 pt-3 cursor-pointer"
                 >
                   {regLoading ? (
-                    <><Loader2 className="w-5 h-5 animate-spin" /><span>Criando…</span></>
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Cadastrando...</span>
+                    </>
                   ) : (
                     <span>
-                      {accountMode === 'admin'
-                        ? 'Criar Conta de Administrador 👑'
-                        : 'Criar conta grátis 🎉'}
+                      {accountType === 'ADMINISTRATOR'
+                        ? 'Criar Conta de Organizador 👑'
+                        : 'Criar Minha Conta Grátis 🎉'}
                     </span>
                   )}
                 </button>
               </form>
             )}
 
-            {/* Banner de atalho para entrada por PIN */}
-            {accountMode === 'participant' ? (
-              <div className="mt-5 p-3.5 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 text-center space-y-1">
-                <div className="text-xs text-yellow-300 font-bold flex items-center justify-center space-x-1.5">
-                  <KeyRound className="w-3.5 h-3.5" />
-                  <span>Tem um PIN ou Link de Sorteio?</span>
-                </div>
-                <p className="text-[11px] text-white/60">
-                  Entre direto na sala do sorteio e garanta seu bilhete:
-                </p>
-                <div>
-                  <Link
-                    to="/participar"
-                    className="inline-flex items-center text-xs font-black text-yellow-400 hover:text-yellow-300 hover:underline pt-0.5"
-                  >
-                    <span>Entrar no Sorteio com PIN →</span>
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-5 p-3.5 rounded-2xl bg-purple-500/15 border border-purple-400/25 text-center space-y-1">
-                <div className="text-xs text-purple-200 font-bold flex items-center justify-center space-x-1.5">
-                  <Shield className="w-3.5 h-3.5 text-purple-300" />
-                  <span>Painel do Organizador de Sorteios</span>
-                </div>
-                <p className="text-[11px] text-white/60">
-                  Quer apenas concorrer em um sorteio como jogador?
-                </p>
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => setAccountMode('participant')}
-                    className="text-xs font-bold text-yellow-300 hover:underline pt-0.5 cursor-pointer"
-                  >
-                    Alternar para Modo Participante 🎮
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Dev mock profiles */}
-            {!hasRealGoogle && (
-              <>
-                <div className="relative flex items-center my-5">
-                  <div className="flex-grow border-t border-white/10" />
-                  <span className="mx-3 text-white/25 text-[10px] uppercase tracking-widest">Dev</span>
-                  <div className="flex-grow border-t border-white/10" />
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { label: 'Admin', email: 'gestor@empresa.com.br', name: 'Gestor de Grupo' },
-                    { label: 'Participante', email: 'joao.silva@gmail.com', name: 'João Silva' },
-                  ].map((p) => (
-                    <button
-                      key={p.email}
-                      onClick={() => handleMockLogin(p.email, p.name)}
-                      disabled={googleLoading}
-                      className="p-2.5 rounded-xl border border-white/15 hover:border-yellow-400/50 hover:bg-yellow-400/5 transition text-xs text-left disabled:opacity-50"
-                    >
-                      <div className="font-bold text-white/80">{p.label}</div>
-                      <div className="text-white/35 truncate">{p.name}</div>
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
+            {/* Aviso de Segurança e Conformidade */}
+            <div className="pt-2 text-center">
+              <p className="text-[11px] text-white/40 leading-relaxed">
+                Ao continuar, você concorda com nossos{' '}
+                <Link to="/legal" className="text-white/60 hover:text-yellow-400 underline">
+                  Termos de Uso
+                </Link>{' '}
+                e{' '}
+                <Link to="/legal" className="text-white/60 hover:text-yellow-400 underline">
+                  Política de Privacidade (LGPD)
+                </Link>
+                .
+              </p>
+            </div>
           </div>
-
-          {/* Footer note */}
-          <p className="text-center text-white/25 text-xs mt-6 leading-relaxed">
-            🔒 CPF criptografado · Conformidade LGPD · Dados protegidos
-          </p>
         </div>
       </div>
     </div>
   );
 };
+
+export default LoginPage;
